@@ -56,7 +56,7 @@ nav{padding:12px 8px;flex:1;overflow-y:auto}
 .stat-pill strong{color:var(--text);font-family:var(--mono)}
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 .topbar{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.page-title{font-size:16px;font-weight:600;color:var(--text)}
+.page-title{font-size:16px;font-weight:600}
 .page-sub{font-size:12px;color:var(--text3);margin-top:1px}
 .topbar-actions{display:flex;gap:8px;align-items:center}
 .content{padding:24px;flex:1}
@@ -87,7 +87,7 @@ td.strong{color:var(--text);font-weight:500}
 .badge-gray{background:rgba(90,106,138,0.15);color:var(--text3)}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto}
 .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1}
 .modal-title{font-size:15px;font-weight:600}
 .modal-body{padding:20px 24px}
@@ -102,397 +102,265 @@ input,select,textarea{background:var(--bg3);border:1px solid var(--border);borde
 input:focus,select:focus,textarea:focus{border-color:var(--teal)}
 select option{background:var(--bg3)}
 textarea{resize:vertical;min-height:60px}
-
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-title{font-size:14px;font-weight:600;color:var(--text)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:14px;font-weight:600}
 .divider{height:1px;background:var(--border);margin:16px 0}
 
 /* Test selector */
-.test-category{margin-bottom:8px}
+.test-category{margin-bottom:10px}
 .test-cat-header{font-size:11px;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.8px;padding:6px 0 4px;border-bottom:1px solid var(--border);margin-bottom:4px}
 .test-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 .test-check-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;padding:4px 6px;border-radius:5px;transition:background .1s}
 .test-check-item:hover{background:var(--bg3);color:var(--text)}
-.test-check-item input{width:13px;height:13px;accent-color:var(--teal);flex-shrink:0}
+.test-check-item input[type=checkbox]{width:13px;height:13px;accent-color:var(--teal);flex-shrink:0}
+.group-badge{font-size:10px;background:var(--amber-dim);color:var(--amber);padding:1px 5px;border-radius:4px;margin-left:4px;flex-shrink:0}
 
-/* Quote builder */
-.quote-line{display:grid;grid-template-columns:1fr 80px 70px 24px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+/* Quote line items */
+.quote-lines-header{display:grid;grid-template-columns:1fr 90px 70px 80px 28px;gap:8px;font-size:11px;color:var(--text3);padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
+.quote-line{display:grid;grid-template-columns:1fr 90px 70px 80px 28px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)}
 .quote-line:last-child{border-bottom:none}
+.line-name{font-size:12px;color:var(--text)}
+.line-rate{font-size:12px;font-family:var(--mono);color:var(--text3)}
+.line-total{font-size:12px;font-family:var(--mono);color:var(--teal);text-align:right}
+.line-qty input{width:60px;padding:4px 6px;font-size:12px}
+.remove-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:2px;border-radius:4px}
+.remove-btn:hover{color:var(--red);background:var(--red-dim)}
+.shared-note{font-size:10px;color:var(--amber);margin-left:4px}
+
+/* Quote totals */
 .quote-total-box{background:var(--bg3);border-radius:8px;padding:14px 16px;margin-top:12px}
 .qt-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--text2)}
-.qt-row.total{font-size:15px;font-weight:600;color:var(--teal);border-top:1px solid var(--border);padding-top:8px;margin-top:6px}
+.qt-row.total-row{font-size:15px;font-weight:600;color:var(--teal);border-top:1px solid var(--border);padding-top:8px;margin-top:6px}
 
 /* Conditioning */
-.cond-section{background:var(--bg3);border-radius:8px;padding:14px;margin-top:12px}
-.cond-title{font-size:12px;font-weight:600;color:var(--amber);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.cond-row{display:grid;grid-template-columns:1fr 120px 80px;gap:8px;align-items:center;margin-bottom:8px}
+.cond-section{background:var(--bg3);border-radius:8px;padding:14px;margin-top:4px}
+.cond-title{font-size:11px;font-weight:600;color:var(--amber);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.cond-row{display:grid;grid-template-columns:1fr 110px 70px 80px;gap:8px;align-items:center;margin-bottom:8px;font-size:12px}
 
-/* Report */
 .report-preview{background:var(--bg3);border-radius:8px;padding:14px;font-size:11px;font-family:var(--mono);color:var(--text2);white-space:pre-wrap;max-height:260px;overflow-y:auto;line-height:1.8}
-
-/* Search & toggle */
 .search-bar{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 12px;display:flex;align-items:center;gap:8px;width:200px}
 .search-bar input{background:none;border:none;padding:0;color:var(--text);font-size:13px;width:100%}
-.nabl-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
-.toggle-wrap{position:relative;width:36px;height:20px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .2s}
-.toggle-wrap.on{background:var(--teal);border-color:var(--teal)}
-.toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .2s}
-.toggle-wrap.on .toggle-knob{transform:translateX(16px)}
-
+.note-box{font-size:11px;color:var(--amber);background:var(--amber-dim);border-radius:6px;padding:7px 10px;margin-top:8px;line-height:1.6}
+.info-box{font-size:11px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:7px 10px;margin-bottom:12px;line-height:1.6}
 .hidden{display:none!important}
-.remark-note{font-size:11px;color:var(--amber);background:var(--amber-dim);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.5}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">RubberLab</div>
     <div class="login-sub">Lab Management System</div>
-    <div class="form-group">
-      <label>Username</label>
-      <input type="text" id="login-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
+    <div class="form-group"><label>Username</label><input type="text" id="login-user" placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="login-btn" onclick="doLogin()">Sign in</button>
     <div class="login-err" id="login-err"></div>
     <div class="login-hint">Contact your lab administrator for access</div>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div class="app hidden" id="app">
   <div class="sidebar">
     <div class="logo">
       <div class="logo-name">RubberLab</div>
       <div class="logo-sub">Lab Management System</div>
-      <div class="logo-user">
-        <span id="current-user-label">—</span>
-        <button class="logout-btn" onclick="doLogout()">Sign out</button>
-      </div>
+      <div class="logo-user"><span id="current-user-label">—</span><button class="logout-btn" onclick="doLogout()">Sign out</button></div>
     </div>
     <nav>
       <div class="nav-section">Main</div>
-      <button class="nav-item active" onclick="showPage('dashboard')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
-      </button>
-      <button class="nav-item" onclick="showPage('samples')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>Samples
-      </button>
-      <button class="nav-item" onclick="showPage('quotations')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Quotations
-      </button>
-      <button class="nav-item" onclick="showPage('reports')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports
-      </button>
+      <button class="nav-item active" onclick="showPage('dashboard')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</button>
+      <button class="nav-item" onclick="showPage('samples')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>Samples</button>
+      <button class="nav-item" onclick="showPage('quotations')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Quotations</button>
+      <button class="nav-item" onclick="showPage('reports')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Reports</button>
       <div class="nav-section">Setup</div>
-      <button class="nav-item" onclick="showPage('clients')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Clients
-      </button>
-      <button class="nav-item" onclick="showPage('pricelist')">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Price List
-      </button>
+      <button class="nav-item" onclick="showPage('clients')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Clients</button>
+      <button class="nav-item" onclick="showPage('pricelist')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Price List</button>
     </nav>
-    <div class="sidebar-footer">
-      <div class="stat-pill"><span>Active samples</span><strong id="sb-active">0</strong></div>
-    </div>
+    <div class="sidebar-footer"><div class="stat-pill"><span>Active samples</span><strong id="sb-active">0</strong></div></div>
   </div>
 
   <div class="main">
-    <!-- DASHBOARD -->
     <div id="page-dashboard">
       <div class="topbar"><div><div class="page-title">Dashboard</div><div class="page-sub">Lab activity overview</div></div></div>
-      <div class="content">
-        <div class="card-grid" id="metrics"></div>
-        <div class="section-header"><span class="section-title">Recent samples</span></div>
-        <div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Client</th><th>Material</th><th>Status</th><th>Date</th></tr></thead><tbody id="dash-table"></tbody></table></div>
-      </div>
+      <div class="content"><div class="card-grid" id="metrics"></div><div class="section-header"><span class="section-title">Recent samples</span></div><div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Client</th><th>Material</th><th>Status</th><th>Date</th></tr></thead><tbody id="dash-table"></tbody></table></div></div>
     </div>
-
-    <!-- SAMPLES -->
     <div id="page-samples" class="hidden">
-      <div class="topbar">
-        <div><div class="page-title">Samples</div><div class="page-sub">Register and track test samples</div></div>
-        <div class="topbar-actions">
-          <div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="sample-search" oninput="renderSamples()" placeholder="Search..."></div>
-          <button class="btn btn-primary" onclick="openModal('sample')">+ New sample</button>
-        </div>
-      </div>
-      <div class="content">
-        <div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Client</th><th>Material</th><th>Tests</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="samples-table"></tbody></table></div>
-      </div>
+      <div class="topbar"><div><div class="page-title">Samples</div><div class="page-sub">Register and track test samples</div></div><div class="topbar-actions"><div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="sample-search" oninput="renderSamples()" placeholder="Search..."></div><button class="btn btn-primary" onclick="openModal('sample')">+ New sample</button></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Client</th><th>Material</th><th>Tests</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="samples-table"></tbody></table></div></div>
     </div>
-
-    <!-- QUOTATIONS -->
     <div id="page-quotations" class="hidden">
-      <div class="topbar">
-        <div><div class="page-title">Quotations</div><div class="page-sub">Generate client quotations with live pricing</div></div>
-        <div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('quote')">+ New quote</button></div>
-      </div>
-      <div class="content">
-        <div class="table-wrap"><table><thead><tr><th>Quote ID</th><th>Client</th><th>Tests</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="quotes-table"></tbody></table></div>
-      </div>
+      <div class="topbar"><div><div class="page-title">Quotations</div><div class="page-sub">Generate client quotations with live pricing</div></div><div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('quote')">+ New quote</button></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Quote ID</th><th>Client</th><th>Tests</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="quotes-table"></tbody></table></div></div>
     </div>
-
-    <!-- REPORTS -->
     <div id="page-reports" class="hidden">
-      <div class="topbar">
-        <div><div class="page-title">Test Reports</div><div class="page-sub">Generate and print test reports</div></div>
-        <div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('report')">+ New report</button></div>
-      </div>
-      <div class="content">
-        <div class="table-wrap"><table><thead><tr><th>Report ID</th><th>Sample ID</th><th>Client</th><th>Material</th><th>Result</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="reports-table"></tbody></table></div>
-      </div>
+      <div class="topbar"><div><div class="page-title">Test Reports</div><div class="page-sub">Generate and print test reports</div></div><div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('report')">+ New report</button></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Report ID</th><th>Sample ID</th><th>Client</th><th>Material</th><th>Result</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="reports-table"></tbody></table></div></div>
     </div>
-
-    <!-- CLIENTS -->
     <div id="page-clients" class="hidden">
-      <div class="topbar">
-        <div><div class="page-title">Clients</div><div class="page-sub">Manage client database</div></div>
-        <div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('client')">+ Add client</button></div>
-      </div>
-      <div class="content">
-        <div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>City</th><th>GSTIN</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div>
-      </div>
+      <div class="topbar"><div><div class="page-title">Clients</div><div class="page-sub">Manage client database</div></div><div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('client')">+ Add client</button></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>City</th><th>GSTIN</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div></div>
     </div>
-
-    <!-- PRICE LIST -->
     <div id="page-pricelist" class="hidden">
-      <div class="topbar">
-        <div><div class="page-title">Price List</div><div class="page-sub">All testing charges — Non-NABL &amp; NABL rates</div></div>
-        <div class="topbar-actions">
-          <div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="price-search" oninput="renderPriceList()" placeholder="Search test..."></div>
-        </div>
-      </div>
-      <div class="content">
-        <div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th></tr></thead><tbody id="price-table"></tbody></table></div>
-      </div>
+      <div class="topbar"><div><div class="page-title">Price List</div><div class="page-sub">All testing charges — Non-NABL &amp; NABL rates</div></div><div class="topbar-actions"><div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="price-search" oninput="renderPriceList()" placeholder="Search test..."></div></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th></tr></thead><tbody id="price-table"></tbody></table></div></div>
     </div>
   </div>
 </div>
 
-<!-- MODALS -->
-
-<!-- Sample Modal -->
+<!-- SAMPLE MODAL -->
 <div class="modal-overlay hidden" id="modal-sample">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="max-width:660px">
     <div class="modal-header"><div class="modal-title">Register new sample</div><button class="btn btn-ghost btn-sm" onclick="closeModal('sample')">✕</button></div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label>Client name *</label><input id="s-client" placeholder="Company name" list="client-names"><datalist id="client-names"></datalist></div>
-        <div class="form-group"><label>Contact / email</label><input id="s-email" placeholder="email@company.com"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Material type *</label>
-          <select id="s-material"><option value="">Select material</option><option>Natural Rubber (NR)</option><option>SBR</option><option>EPDM</option><option>NBR</option><option>CR (Neoprene)</option><option>Silicone</option><option>HNBR</option><option>CPE</option><option>Hypalon</option><option>Plastic</option><option>Latex</option><option>Adhesive</option><option>Other</option></select>
-        </div>
-        <div class="form-group"><label>Sample quantity / description</label><input id="s-qty" placeholder="e.g. 3 pieces, 500g"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Testing type</label>
-          <select id="s-nabl"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select>
-        </div>
-        <div class="form-group"><label>Priority</label>
-          <select id="s-priority"><option>Normal</option><option>Urgent</option><option>Express</option></select>
-        </div>
-      </div>
-      <div class="form-row full">
-        <div class="form-group"><label>Tests requested *</label><div id="s-test-list" style="margin-top:6px"></div></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Expected delivery (days)</label><input id="s-days" type="number" value="7"></div>
-        <div class="form-group"><label>Reference standard</label><input id="s-std" placeholder="e.g. IS 3400, ASTM D412"></div>
-      </div>
-      <div class="form-row full">
-        <div class="form-group"><label>Remarks</label><textarea id="s-remarks" placeholder="Special instructions, conditioning required, etc."></textarea></div>
-      </div>
+      <div class="form-row"><div class="form-group"><label>Client name *</label><input id="s-client" placeholder="Company name" list="client-names"><datalist id="client-names"></datalist></div><div class="form-group"><label>Contact / email</label><input id="s-email" placeholder="email@company.com"></div></div>
+      <div class="form-row"><div class="form-group"><label>Material type *</label><select id="s-material"><option value="">Select material</option><option>Natural Rubber (NR)</option><option>SBR</option><option>EPDM</option><option>NBR</option><option>CR (Neoprene)</option><option>Silicone</option><option>HNBR</option><option>CPE</option><option>Hypalon</option><option>Plastic</option><option>Latex</option><option>Adhesive</option><option>Other</option></select></div><div class="form-group"><label>Sample quantity / description</label><input id="s-qty" placeholder="e.g. 3 pieces, 500g"></div></div>
+      <div class="form-row"><div class="form-group"><label>Testing type</label><select id="s-nabl"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select></div><div class="form-group"><label>Priority</label><select id="s-priority"><option>Normal</option><option>Urgent</option><option>Express</option></select></div></div>
+      <div class="form-row full"><div class="form-group"><label>Tests requested *</label><div id="s-test-list" style="margin-top:6px"></div></div></div>
+      <div class="form-row"><div class="form-group"><label>Expected delivery (days)</label><input id="s-days" type="number" value="7"></div><div class="form-group"><label>Reference standard</label><input id="s-std" placeholder="e.g. IS 3400, ASTM D412"></div></div>
+      <div class="form-row full"><div class="form-group"><label>Remarks</label><textarea id="s-remarks" placeholder="Special instructions, conditioning required, etc."></textarea></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('sample')">Cancel</button>
-      <button class="btn btn-primary" onclick="addSample()">Register sample</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('sample')">Cancel</button><button class="btn btn-primary" onclick="addSample()">Register sample</button></div>
   </div>
 </div>
 
-<!-- Quote Modal -->
+<!-- QUOTE MODAL -->
 <div class="modal-overlay hidden" id="modal-quote">
-  <div class="modal" style="max-width:680px">
+  <div class="modal" style="max-width:700px">
     <div class="modal-header"><div class="modal-title">Generate quotation</div><button class="btn btn-ghost btn-sm" onclick="closeModal('quote')">✕</button></div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label>Client name *</label><input id="q-client" placeholder="Company name" list="client-names2"><datalist id="client-names2"></datalist></div>
-        <div class="form-group"><label>Client email</label><input id="q-email" placeholder="email@company.com"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Testing type</label>
-          <select id="q-nabl" onchange="buildQuoteTests()"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select>
-        </div>
-        <div class="form-group"><label>Reference / PO No.</label><input id="q-ref" placeholder="Optional"></div>
-      </div>
+      <div class="form-row"><div class="form-group"><label>Client name *</label><input id="q-client" placeholder="Company name" list="client-names2"><datalist id="client-names2"></datalist></div><div class="form-group"><label>Client email</label><input id="q-email" placeholder="email@company.com"></div></div>
+      <div class="form-row"><div class="form-group"><label>Testing type</label><select id="q-nabl" onchange="rebuildQuoteLines()"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select></div><div class="form-group"><label>Reference / PO No.</label><input id="q-ref" placeholder="Optional"></div></div>
       <div class="divider"></div>
-      <div class="section-header"><span class="section-title">Select tests</span><span style="font-size:11px;color:var(--text3)" id="q-selected-count">0 selected</span></div>
-      <div id="quote-test-selector" style="margin-bottom:4px"></div>
 
-      <!-- Conditioning charges -->
-      <div class="cond-section">
-        <div class="cond-title">Conditioning / Ageing charges (optional)</div>
-        <div class="cond-row" style="font-size:11px;color:var(--text3);margin-bottom:4px"><span>Type</span><span>Rate (₹/day)</span><span>Days</span></div>
-        <div class="cond-row">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-100" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 100°C</label>
-          <span style="font-size:12px;font-family:var(--mono);color:var(--text3)">₹660/day</span>
-          <input type="number" id="cd-100" value="1" min="1" style="font-size:12px;padding:4px 6px;width:60px" oninput="calcTotal()">
-        </div>
-        <div class="cond-row">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-125" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 125°C</label>
-          <span style="font-size:12px;font-family:var(--mono);color:var(--text3)">₹770/day</span>
-          <input type="number" id="cd-125" value="1" min="1" style="font-size:12px;padding:4px 6px;width:60px" oninput="calcTotal()">
-        </div>
-        <div class="cond-row">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-150" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 150°C</label>
-          <span style="font-size:12px;font-family:var(--mono);color:var(--text3)">₹880/day</span>
-          <input type="number" id="cd-150" value="1" min="1" style="font-size:12px;padding:4px 6px;width:60px" oninput="calcTotal()">
-        </div>
-        <div class="cond-row">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-300" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 300°C</label>
-          <span style="font-size:12px;font-family:var(--mono);color:var(--text3)">₹1200/day</span>
-          <input type="number" id="cd-300" value="1" min="1" style="font-size:12px;padding:4px 6px;width:60px" oninput="calcTotal()">
-        </div>
-        <div class="remark-note">Note: Ageing charges are common if multiple samples share the same ageing conditions in one order.</div>
+      <!-- Test selector -->
+      <div class="section-header"><span class="section-title">Select tests</span><span style="font-size:11px;color:var(--text3)">Tick to add → set quantity per line</span></div>
+      <div class="info-box">💡 Tensile + Elongation + Modulus (Rubber or Plastic) are billed as one group charge × quantity. Selecting any combination charges once per sample.</div>
+      <div id="q-test-selector"></div>
+
+      <!-- Selected lines -->
+      <div id="q-lines-section" class="hidden" style="margin-top:16px">
+        <div class="section-header" style="margin-bottom:8px"><span class="section-title">Selected tests &amp; quantities</span></div>
+        <div class="quote-lines-header"><span>Test / Group</span><span>Rate (₹)</span><span>Qty</span><span style="text-align:right">Line total</span><span></span></div>
+        <div id="q-lines"></div>
       </div>
 
-      <div class="divider"></div>
-      <div class="form-row three">
-        <div class="form-group"><label>Moulding of specimens</label>
-          <select id="q-mould" onchange="calcTotal()"><option value="0">None</option><option value="950">Non-NABL — ₹950</option><option value="1000">NABL — ₹1000</option></select>
+      <!-- Conditioning -->
+      <div class="cond-section" style="margin-top:16px">
+        <div class="cond-title">Hot Air Ageing / Conditioning (optional)</div>
+        <div class="cond-row" style="font-size:11px;color:var(--text3);margin-bottom:6px"><span>Type</span><span>Rate</span><span>Days</span><span style="text-align:right">Charge</span></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-100" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 100°C</label><span style="font-family:var(--mono);color:var(--text3)">₹660/day</span><input type="number" id="cd-100" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-100" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-125" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 125°C</label><span style="font-family:var(--mono);color:var(--text3)">₹770/day</span><input type="number" id="cd-125" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-125" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-150" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 150°C</label><span style="font-family:var(--mono);color:var(--text3)">₹880/day</span><input type="number" id="cd-150" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-150" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-300" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 300°C</label><span style="font-family:var(--mono);color:var(--text3)">₹1200/day</span><input type="number" id="cd-300" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-300" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div class="note-box">Ageing charges are common if multiple samples share the same ageing conditions in one order.</div>
+      </div>
+
+      <!-- Ozone -->
+      <div class="cond-section" style="margin-top:12px">
+        <div class="cond-title">Ozone Resistance (optional)</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer"><input type="checkbox" id="oz-enable" style="accent-color:var(--teal);width:13px;height:13px" onchange="calcTotal()"> Enable ozone charge</label>
+          <select id="oz-pphm" onchange="calcTotal()" style="font-size:12px;padding:5px 8px;width:180px">
+            <option value="25">25 PPHM — ₹6,600 base</option>
+            <option value="50">50 PPHM — ₹6,000 base</option>
+            <option value="100">100 PPHM — ₹8,500 base</option>
+            <option value="200">200 PPHM — ₹10,150 base</option>
+          </select>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:8px">
+          <div class="form-group"><label>No. of samples</label><input type="number" id="oz-samples" value="1" min="1" style="font-size:12px;padding:5px 8px" oninput="calcTotal()"></div>
+          <div class="form-group"><label>Extra hours beyond 48 hrs</label><input type="number" id="oz-extrahrs" value="0" min="0" style="font-size:12px;padding:5px 8px" oninput="calcTotal()"></div>
+          <div class="form-group"><label>Calculated ozone charge</label><input readonly id="oz-display" value="₹0" style="font-size:12px;padding:5px 8px;color:var(--teal);font-family:var(--mono);background:var(--bg4)"></div>
+        </div>
+        <div class="note-box" id="oz-breakdown" style="display:none"></div>
+        <div class="note-box">2nd sample onwards charged at 60% of first sample's ozone charge. NABL rates apply for 50/100/200 PPHM only.</div>
+      </div>
+
+      <div class="form-row three" style="margin-top:16px">
+        <div class="form-group"><label>Moulding of specimens</label><select id="q-mould" onchange="calcTotal()"><option value="0">None</option><option value="950">Non-NABL — ₹950</option><option value="1000">NABL — ₹1000</option></select></div>
         <div class="form-group"><label>Discount (%)</label><input id="q-disc" type="number" value="0" min="0" max="100" oninput="calcTotal()"></div>
         <div class="form-group"><label>GST (%)</label><input id="q-gst" type="number" value="18" min="0" oninput="calcTotal()"></div>
       </div>
 
       <div class="quote-total-box">
-        <div class="qt-row"><span>Tests subtotal</span><span id="qt-tests">₹0</span></div>
-        <div class="qt-row"><span>Conditioning charges</span><span id="qt-cond">₹0</span></div>
-        <div class="qt-row"><span>Moulding</span><span id="qt-mould">₹0</span></div>
-        <div class="qt-row"><span>Discount</span><span id="qt-disc">— ₹0</span></div>
-        <div class="qt-row"><span>GST</span><span id="qt-gst">₹0</span></div>
-        <div class="qt-row total"><span>Total payable</span><span id="qt-total">₹0</span></div>
+        <div class="qt-row"><span>Tests subtotal</span><span id="qt-tests" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span>Conditioning charges</span><span id="qt-cond" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span>Ozone charges</span><span id="qt-ozone" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span>Moulding</span><span id="qt-mould" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span>Discount</span><span id="qt-disc" style="font-family:var(--mono)">— ₹0</span></div>
+        <div class="qt-row"><span>GST</span><span id="qt-gst-amt" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row total-row"><span>Total payable</span><span id="qt-total" style="font-family:var(--mono)">₹0</span></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('quote')">Cancel</button>
-      <button class="btn btn-primary" onclick="addQuote()">Save quotation</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('quote')">Cancel</button><button class="btn btn-primary" onclick="addQuote()">Save quotation</button></div>
   </div>
 </div>
 
-<!-- Report Modal -->
+<!-- REPORT MODAL -->
 <div class="modal-overlay hidden" id="modal-report">
-  <div class="modal" style="max-width:640px">
+  <div class="modal" style="max-width:660px">
     <div class="modal-header"><div class="modal-title">Generate test report</div><button class="btn btn-ghost btn-sm" onclick="closeModal('report')">✕</button></div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label>Sample ID *</label><select id="r-sample" onchange="updateReportFields()"><option value="">Select sample</option></select></div>
-        <div class="form-group"><label>Overall result *</label><select id="r-result"><option>Pass</option><option>Fail</option><option>Conditional Pass</option></select></div>
-      </div>
+      <div class="form-row"><div class="form-group"><label>Sample ID *</label><select id="r-sample" onchange="updateReportFields()"><option value="">Select sample</option></select></div><div class="form-group"><label>Overall result *</label><select id="r-result" onchange="updatePreview()"><option>Pass</option><option>Fail</option><option>Conditional Pass</option></select></div></div>
       <div id="r-test-fields" style="margin-bottom:12px"></div>
-      <div class="form-row full">
-        <div class="form-group"><label>Tested by</label><input id="r-tester" placeholder="Technician name"></div>
-      </div>
-      <div class="form-row full">
-        <div class="form-group"><label>Remarks / observations</label><textarea id="r-remarks" placeholder="Any observations, deviations from standard..."></textarea></div>
-      </div>
-      <div style="margin-top:12px">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Report preview</div>
-        <div class="report-preview" id="report-preview">Select a sample to preview...</div>
-      </div>
+      <div class="form-row full"><div class="form-group"><label>Tested by</label><input id="r-tester" placeholder="Technician name" oninput="updatePreview()"></div></div>
+      <div class="form-row full"><div class="form-group"><label>Remarks / observations</label><textarea id="r-remarks" placeholder="Any observations..." oninput="updatePreview()"></textarea></div></div>
+      <div style="margin-top:12px"><div style="font-size:12px;color:var(--text3);margin-bottom:6px">Report preview</div><div class="report-preview" id="report-preview">Select a sample to preview...</div></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('report')">Cancel</button>
-      <button class="btn btn-primary" onclick="addReport()">Generate &amp; save</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('report')">Cancel</button><button class="btn btn-primary" onclick="addReport()">Generate &amp; save</button></div>
   </div>
 </div>
 
-<!-- Client Modal -->
+<!-- CLIENT MODAL -->
 <div class="modal-overlay hidden" id="modal-client">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Add client</div><button class="btn btn-ghost btn-sm" onclick="closeModal('client')">✕</button></div>
     <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label>Company name *</label><input id="c-company" placeholder="ABC Pvt. Ltd."></div>
-        <div class="form-group"><label>Contact person</label><input id="c-contact" placeholder="Name"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Email</label><input id="c-email" placeholder="email@company.com"></div>
-        <div class="form-group"><label>Phone</label><input id="c-phone" placeholder="+91 98765 43210"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>City</label><input id="c-city" placeholder="Mumbai"></div>
-        <div class="form-group"><label>GSTIN</label><input id="c-gst" placeholder="22AAAAA0000A1Z5"></div>
-      </div>
+      <div class="form-row"><div class="form-group"><label>Company name *</label><input id="c-company" placeholder="ABC Pvt. Ltd."></div><div class="form-group"><label>Contact person</label><input id="c-contact" placeholder="Name"></div></div>
+      <div class="form-row"><div class="form-group"><label>Email</label><input id="c-email" placeholder="email@company.com"></div><div class="form-group"><label>Phone</label><input id="c-phone" placeholder="+91 98765 43210"></div></div>
+      <div class="form-row"><div class="form-group"><label>City</label><input id="c-city" placeholder="Mumbai"></div><div class="form-group"><label>GSTIN</label><input id="c-gst" placeholder="22AAAAA0000A1Z5"></div></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('client')">Cancel</button>
-      <button class="btn btn-primary" onclick="addClient()">Add client</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('client')">Cancel</button><button class="btn btn-primary" onclick="addClient()">Add client</button></div>
   </div>
 </div>
 
-<!-- Status Modal -->
+<!-- STATUS MODAL -->
 <div class="modal-overlay hidden" id="modal-status">
   <div class="modal" style="max-width:340px">
     <div class="modal-header"><div class="modal-title">Update status</div><button class="btn btn-ghost btn-sm" onclick="closeModal('status')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label>New status</label>
-        <select id="status-select"><option>Received</option><option>In Queue</option><option>Testing</option><option>Analysis</option><option>Done</option><option>Dispatched</option></select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('status')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmStatus()">Update</button>
-    </div>
+    <div class="modal-body"><div class="form-group"><label>New status</label><select id="status-select"><option>Received</option><option>In Queue</option><option>Testing</option><option>Analysis</option><option>Done</option><option>Dispatched</option></select></div></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('status')">Cancel</button><button class="btn btn-primary" onclick="confirmStatus()">Update</button></div>
   </div>
 </div>
 
 <script>
-// ── AUTH ──────────────────────────────────────────────────────────────
-const USERS={
-  'admin':{pass:'lab@2024',role:'Admin'},
-  'labtech':{pass:'tech@2024',role:'Technician'},
-  'manager':{pass:'mgr@2024',role:'Manager'}
-};
+// ── AUTH ───────────────────────────────────────────────────────────────
+const USERS={'admin':{pass:'lab@2024',role:'Admin'},'labtech':{pass:'tech@2024',role:'Technician'},'manager':{pass:'mgr@2024',role:'Manager'}};
 let currentUser=null;
-
 function doLogin(){
   const u=document.getElementById('login-user').value.trim().toLowerCase();
   const p=document.getElementById('login-pass').value;
-  const err=document.getElementById('login-err');
   if(USERS[u]&&USERS[u].pass===p){
     currentUser={username:u,role:USERS[u].role};
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     document.getElementById('current-user-label').textContent=USERS[u].role+': '+u;
-    err.textContent='';
+    document.getElementById('login-err').textContent='';
     renderDash();
-  } else {
-    err.textContent='Invalid username or password.';
-  }
+  } else {document.getElementById('login-err').textContent='Invalid username or password.';}
 }
 function doLogout(){
   currentUser=null;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
-  document.getElementById('login-user').value='';
-  document.getElementById('login-pass').value='';
+  document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
 }
 
 // ── PRICE DATA ─────────────────────────────────────────────────────────
+// groupId: tests with same groupId share one charge (billed once × qty)
 const PRICE_DATA=[
-  // Chemical
   {sr:'1',name:'Acetone Extract (& Extraction)',cat:'Chemical',nonNabl:2100,nabl:2200},
   {sr:'2',name:'RHC Content (Polymer Content)',cat:'Chemical',nonNabl:6200,nabl:null},
   {sr:'3',name:'Ash Content',cat:'Chemical',nonNabl:2200,nabl:2200},
@@ -528,28 +396,29 @@ const PRICE_DATA=[
   {sr:'133',name:'DBP Absorption',cat:'Chemical',nonNabl:2100,nabl:null},
   {sr:'135',name:'Heavy Metal',cat:'Chemical',nonNabl:2750,nabl:null,remark:'Per metal'},
   {sr:'143',name:'Iodine Absorption',cat:'Chemical',nonNabl:2100,nabl:null},
-  // Physical - Mechanical
+  // Physical — rubber mech group
+  {sr:'42',name:'Tensile Strength (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
+  {sr:'43',name:'Elongation at Break (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
+  {sr:'44',name:'Modulus 100% / 200% / 300% (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
+  // Physical — plastic mech group
+  {sr:'45',name:'Tensile Strength (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
+  {sr:'46',name:'Elongation at Break (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
+  {sr:'47',name:'Modulus 100% / 200% / 300% (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
+  // Physical — rest
   {sr:'23',name:'Rebound Resilience',cat:'Physical',nonNabl:1550,nabl:1650},
   {sr:'25',name:'Specific Gravity / Density of Raw Material',cat:'Physical',nonNabl:1450,nabl:1450},
   {sr:'26',name:'Specific Gravity / Density of Chemical Powder',cat:'Physical',nonNabl:1550,nabl:null},
-  {sr:'32',name:'Load @ 25% Deflection (RMA Value) (KG)',cat:'Physical',nonNabl:3150,nabl:3050},
+  {sr:'32',name:'Load @ 25% Deflection (RMA Value)',cat:'Physical',nonNabl:3150,nabl:3050},
   {sr:'35',name:'Dimensions',cat:'Physical',nonNabl:1100,nabl:null},
   {sr:'36',name:'Hose Dimensions',cat:'Physical',nonNabl:1000,nabl:null},
   {sr:'41a',name:'Hardness — Shore A',cat:'Physical',nonNabl:650,nabl:650},
   {sr:'41b',name:'Hardness — Shore D',cat:'Physical',nonNabl:900,nabl:null},
   {sr:'41c',name:'Hardness — IRHD',cat:'Physical',nonNabl:900,nabl:null},
   {sr:'41d',name:'Hardness — Micro Hardness',cat:'Physical',nonNabl:1100,nabl:null},
-  {sr:'42',name:'Tensile Strength (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100},
-  {sr:'43',name:'Elongation at Break (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100},
-  {sr:'44',name:'Modulus 100% / 200% / 300% (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100},
-  {sr:'45',name:'Tensile Strength (Plastic)',cat:'Physical',nonNabl:2100,nabl:null},
-  {sr:'46',name:'Elongation at Break (Plastic)',cat:'Physical',nonNabl:2100,nabl:null},
-  {sr:'47',name:'Modulus 100% / 200% / 300% (Plastic)',cat:'Physical',nonNabl:2100,nabl:null},
   {sr:'48',name:'Tear Strength / Angular Tear',cat:'Physical',nonNabl:2100,nabl:2100},
   {sr:'49',name:'Tension Set',cat:'Physical',nonNabl:2100,nabl:2100},
   {sr:'50',name:'Specific Gravity of Finished Product',cat:'Physical',nonNabl:1450,nabl:1500},
   {sr:'51',name:'Load Recovery',cat:'Physical',nonNabl:2000,nabl:null},
-  {sr:'52',name:'Cork Sheet — Recovery',cat:'Physical',nonNabl:2000,nabl:null},
   {sr:'53',name:'Compressibility',cat:'Physical',nonNabl:2500,nabl:null},
   {sr:'54',name:'Compressive Strength',cat:'Physical',nonNabl:3050,nabl:null},
   {sr:'55',name:'Deflection Load',cat:'Physical',nonNabl:2500,nabl:null},
@@ -567,30 +436,28 @@ const PRICE_DATA=[
   {sr:'72',name:'Bond Strength / Adhesion Strength',cat:'Physical',nonNabl:2750,nabl:3050},
   {sr:'73',name:'Bond Strength — Rubber to Metal',cat:'Physical',nonNabl:2750,nabl:3050},
   {sr:'77',name:'Shear Strength (Dry)',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'78',name:'Shear Strength (Wet) incl. Wetting Time',cat:'Physical',nonNabl:2600,nabl:null},
+  {sr:'78',name:'Shear Strength (Wet)',cat:'Physical',nonNabl:2600,nabl:null},
   {sr:'99',name:'Damping Co-efficient',cat:'Physical',nonNabl:3200,nabl:null},
-  {sr:'101',name:'Izod Impact at R.T. + Sample Preparation',cat:'Physical',nonNabl:2500,nabl:null},
+  {sr:'101',name:'Izod Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null},
   {sr:'102',name:'Charpy Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null},
   {sr:'105',name:'Goodrich Heat Built Up',cat:'Physical',nonNabl:2900,nabl:null},
   {sr:'107',name:'Thickness',cat:'Physical',nonNabl:700,nabl:null},
   {sr:'108',name:'Shrinkage',cat:'Physical',nonNabl:1400,nabl:null},
-  {sr:'110',name:'Auto Ignition Temp',cat:'Physical',nonNabl:1950,nabl:null},
   {sr:'114',name:'Burst Pressure',cat:'Physical',nonNabl:3150,nabl:null},
-  {sr:'117',name:'Dispersion',cat:'Physical',nonNabl:1800,nabl:null},
   {sr:'119',name:'Flexural Strength',cat:'Physical',nonNabl:3150,nabl:null},
   {sr:'120',name:'Impact Strength',cat:'Physical',nonNabl:1950,nabl:null},
   {sr:'121',name:'Vicat Softening Temp',cat:'Physical',nonNabl:2500,nabl:null},
   {sr:'123',name:'Leakage Test',cat:'Physical',nonNabl:2050,nabl:null},
-  // Rheology / Processing
+  // Rheology
   {sr:'33',name:'Crystallisation Melting Point',cat:'Rheology',nonNabl:1800,nabl:null},
   {sr:'37',name:'Mooney Scorch',cat:'Rheology',nonNabl:2200,nabl:null},
   {sr:'38',name:'Mooney Viscosity',cat:'Rheology',nonNabl:2200,nabl:null},
   {sr:'40a',name:'Rheometer Study — Upto 60 Minutes',cat:'Rheology',nonNabl:1600,nabl:null},
   {sr:'40b',name:'Rheometer Study — Beyond 60 Minutes',cat:'Rheology',nonNabl:1900,nabl:null},
-  // Oil / Swelling
+  // Oil & Swelling
   {sr:'69base',name:'Oil Swelling / Acid Resistance — Base Charge',cat:'Oil & Swelling',nonNabl:1500,nabl:1550},
-  {sr:'69a',name:'Oil Swelling — ASTM Oil No. 1/2/3 (Swelling)',cat:'Oil & Swelling',nonNabl:1900,nabl:2000},
-  {sr:'69a2',name:'Oil Swelling — ASTM Oil No. 1/2/3 (Tensile/EB)',cat:'Oil & Swelling',nonNabl:2600,nabl:2750},
+  {sr:'69a',name:'ASTM Oil No. 1/2/3 — Swelling',cat:'Oil & Swelling',nonNabl:1900,nabl:2000},
+  {sr:'69a2',name:'ASTM Oil No. 1/2/3 — Tensile / EB',cat:'Oil & Swelling',nonNabl:2600,nabl:2750},
   {sr:'69b',name:'Oil/Swelling — Acid / Alkali',cat:'Oil & Swelling',nonNabl:1150,nabl:700},
   {sr:'69c',name:'Oil/Swelling — Diesel / Petrol / Kerosene',cat:'Oil & Swelling',nonNabl:1000,nabl:900},
   {sr:'69d',name:'Oil/Swelling — Distilled Water',cat:'Oil & Swelling',nonNabl:750,nabl:650},
@@ -603,28 +470,26 @@ const PRICE_DATA=[
   {sr:'94',name:'Surface / Volume Resistivity',cat:'Electrical',nonNabl:2500,nabl:null},
   {sr:'112',name:'Arc Resistance',cat:'Electrical',nonNabl:3550,nabl:null},
   // Low Temperature
-  {sr:'95a',name:'Low Temp Flexibility — Upto -20°C for 24 hrs',cat:'Low Temperature',nonNabl:3100,nabl:3300},
-  {sr:'95b',name:'Low Temp Flexibility — Upto -40°C for 24 hrs',cat:'Low Temperature',nonNabl:3850,nabl:4000},
-  {sr:'95c',name:'Low Temp Flexibility — Upto -70°C for 24 hrs',cat:'Low Temperature',nonNabl:4500,nabl:4950},
+  {sr:'95a',name:'Low Temp Flexibility — Upto -20°C / 24 hrs',cat:'Low Temperature',nonNabl:3100,nabl:3300},
+  {sr:'95b',name:'Low Temp Flexibility — Upto -40°C / 24 hrs',cat:'Low Temperature',nonNabl:3850,nabl:4000},
+  {sr:'95c',name:'Low Temp Flexibility — Upto -70°C / 24 hrs',cat:'Low Temperature',nonNabl:4500,nabl:4950},
   {sr:'96',name:'TR 10 (Retraction by 10%)',cat:'Low Temperature',nonNabl:3900,nabl:4000},
-  {sr:'97',name:'Low Temp Brittleness (Find temperature)',cat:'Low Temperature',nonNabl:4950,nabl:5250},
+  {sr:'97',name:'Low Temp Brittleness',cat:'Low Temperature',nonNabl:4950,nabl:5250},
   // Ozone
-  {sr:'91a',name:'Ozone Resistance — 25 PPHM Upto 48 hrs',cat:'Ozone',nonNabl:6600,nabl:null,remark:'60% charge for 2nd sample onwards'},
-  {sr:'91b',name:'Ozone Resistance — 50 PPHM Upto 48 hrs',cat:'Ozone',nonNabl:6000,nabl:6000},
-  {sr:'91c',name:'Ozone Resistance — 100 PPHM Upto 48 hrs',cat:'Ozone',nonNabl:8500,nabl:8650},
-  {sr:'91d',name:'Ozone Resistance — 200 PPHM Upto 48 hrs',cat:'Ozone',nonNabl:10150,nabl:10300},
-  // Miscellaneous
+  {sr:'91a',name:'Ozone Resistance — 25 PPHM / 48 hrs',cat:'Ozone',nonNabl:6600,nabl:null,remark:'60% for 2nd sample onwards'},
+  {sr:'91b',name:'Ozone Resistance — 50 PPHM / 48 hrs',cat:'Ozone',nonNabl:6000,nabl:6000},
+  {sr:'91c',name:'Ozone Resistance — 100 PPHM / 48 hrs',cat:'Ozone',nonNabl:8500,nabl:8650},
+  {sr:'91d',name:'Ozone Resistance — 200 PPHM / 48 hrs',cat:'Ozone',nonNabl:10150,nabl:10300},
+  // Misc
   {sr:'24',name:'Heat Loss',cat:'Miscellaneous',nonNabl:2300,nabl:null},
   {sr:'34',name:'Colour (Visual)',cat:'Miscellaneous',nonNabl:700,nabl:null},
   {sr:'39',name:'Moulding of Test Specimen',cat:'Miscellaneous',nonNabl:950,nabl:1000},
   {sr:'58',name:'CFR 21 Testing',cat:'Miscellaneous',nonNabl:9900,nabl:null},
   {sr:'71',name:'Circumferential Swell Test',cat:'Miscellaneous',nonNabl:3650,nabl:null},
-  {sr:'75',name:'Corrosion of Metal (per day exposure)',cat:'Miscellaneous',nonNabl:2750,nabl:null},
+  {sr:'75',name:'Corrosion of Metal (per day)',cat:'Miscellaneous',nonNabl:2750,nabl:null},
   {sr:'79',name:'Weight in GSM',cat:'Miscellaneous',nonNabl:1350,nabl:null},
   {sr:'81',name:'Odour',cat:'Miscellaneous',nonNabl:1250,nabl:null},
-  {sr:'82',name:'Sieve Analysis',cat:'Miscellaneous',nonNabl:1350,nabl:null},
-  {sr:'83',name:'Working Drying Time (mins)',cat:'Miscellaneous',nonNabl:1800,nabl:null},
-  {sr:'84',name:'Fire Resistance (seconds)',cat:'Miscellaneous',nonNabl:2650,nabl:null},
+  {sr:'84',name:'Fire Resistance',cat:'Miscellaneous',nonNabl:2650,nabl:null},
   {sr:'85',name:'Kinematic Viscosity @ 40°C',cat:'Miscellaneous',nonNabl:1600,nabl:null},
   {sr:'86',name:'Kinematic Viscosity @ 100°C',cat:'Miscellaneous',nonNabl:1800,nabl:null},
   {sr:'87',name:'Pour Point',cat:'Miscellaneous',nonNabl:2450,nabl:null},
@@ -632,29 +497,37 @@ const PRICE_DATA=[
   {sr:'89',name:'Aniline Point',cat:'Miscellaneous',nonNabl:1850,nabl:null},
   {sr:'100',name:'Blooming Identification',cat:'Miscellaneous',nonNabl:3800,nabl:4200},
   {sr:'106',name:'Staining Test',cat:'Miscellaneous',nonNabl:2500,nabl:null},
-  {sr:'109',name:'Odour of Water Extract',cat:'Miscellaneous',nonNabl:1650,nabl:null},
+  {sr:'110',name:'Auto Ignition Temp',cat:'Miscellaneous',nonNabl:1950,nabl:null},
   {sr:'111',name:'Setting Time',cat:'Miscellaneous',nonNabl:1650,nabl:null},
-  {sr:'113',name:'Salt Spray — 1 Day',cat:'Miscellaneous',nonNabl:6600,nabl:null,remark:'2nd sample at 60% of 1st'},
+  {sr:'113',name:'Salt Spray — 1 Day',cat:'Miscellaneous',nonNabl:6600,nabl:null,remark:'2nd sample at 60%'},
   {sr:'118',name:'Co-efficient of Linear Expansion',cat:'Miscellaneous',nonNabl:1350,nabl:null},
   {sr:'122',name:'Softening Point',cat:'Miscellaneous',nonNabl:1650,nabl:null},
   {sr:'124',name:'Light Transmittance',cat:'Miscellaneous',nonNabl:1550,nabl:null},
-  {sr:'125',name:'Gel Time',cat:'Miscellaneous',nonNabl:1600,nabl:null},
 ];
 
+// Group definitions: all tests in same groupId → billed as one charge × qty
+const GROUPS={
+  'rubber-mech':{label:'Tensile + Elongation + Modulus (Rubber)',nonNabl:2100,nabl:2100},
+  'plastic-mech':{label:'Tensile + Elongation + Modulus (Plastic)',nonNabl:2100,nabl:null},
+};
+
 // ── DATA STORES ────────────────────────────────────────────────────────
-let samples=JSON.parse(localStorage.getItem('rl2-samples')||'[]');
-let quotes=JSON.parse(localStorage.getItem('rl2-quotes')||'[]');
-let reports=JSON.parse(localStorage.getItem('rl2-reports')||'[]');
-let clients=JSON.parse(localStorage.getItem('rl2-clients')||'[]');
+let samples=JSON.parse(localStorage.getItem('rl3-samples')||'[]');
+let quotes=JSON.parse(localStorage.getItem('rl3-quotes')||'[]');
+let reports=JSON.parse(localStorage.getItem('rl3-reports')||'[]');
+let clients=JSON.parse(localStorage.getItem('rl3-clients')||'[]');
 let statusTarget=null;
+// Quote builder state: array of {type:'single'|'group', sr/groupId, name, rate, qty}
+let quoteLines=[];
 
 function save(){
-  localStorage.setItem('rl2-samples',JSON.stringify(samples));
-  localStorage.setItem('rl2-quotes',JSON.stringify(quotes));
-  localStorage.setItem('rl2-reports',JSON.stringify(reports));
-  localStorage.setItem('rl2-clients',JSON.stringify(clients));
+  localStorage.setItem('rl3-samples',JSON.stringify(samples));
+  localStorage.setItem('rl3-quotes',JSON.stringify(quotes));
+  localStorage.setItem('rl3-reports',JSON.stringify(reports));
+  localStorage.setItem('rl3-clients',JSON.stringify(clients));
 }
 function genId(p,a){return p+'-'+new Date().getFullYear()+'-'+String(a.length+1).padStart(4,'0');}
+function getRate(t,nabl){return nabl==='nabl'&&t.nabl!=null?t.nabl:t.nonNabl;}
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────
 const PAGES=['dashboard','samples','quotations','reports','clients','pricelist'];
@@ -673,161 +546,217 @@ function showPage(p){
 function openModal(m){
   updateClientDatalist();
   if(m==='sample')buildSampleTestList();
-  if(m==='quote'){buildQuoteTests();}
+  if(m==='quote'){quoteLines=[];buildQuoteSelector();renderQuoteLines();calcTotal();}
   if(m==='report'){
     const sel=document.getElementById('r-sample');
     sel.innerHTML='<option value="">Select sample</option>'+samples.map(s=>`<option value="${s.id}">${s.id} — ${s.client} (${s.material})</option>`).join('');
+    document.getElementById('r-test-fields').innerHTML='';
+    document.getElementById('report-preview').textContent='Select a sample to preview...';
   }
   document.getElementById('modal-'+m).classList.remove('hidden');
 }
 function closeModal(m){document.getElementById('modal-'+m).classList.add('hidden');}
-
 function updateClientDatalist(){
-  ['client-names','client-names2'].forEach(id=>{
-    const dl=document.getElementById(id);
-    if(dl)dl.innerHTML=clients.map(c=>`<option value="${c.company}">`).join('');
-  });
+  ['client-names','client-names2'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.innerHTML=clients.map(c=>`<option value="${c.company}">`).join('');});
 }
 
-// ── TEST SELECTOR (shared) ─────────────────────────────────────────────
-function buildTestSelector(containerId,onchange){
+// ── SAMPLE TEST SELECTOR ───────────────────────────────────────────────
+function buildSampleTestList(){
   const cats=[...new Set(PRICE_DATA.map(t=>t.cat))];
-  const container=document.getElementById(containerId);
-  container.innerHTML=cats.map(cat=>{
+  document.getElementById('s-test-list').innerHTML=cats.map(cat=>{
     const tests=PRICE_DATA.filter(t=>t.cat===cat);
-    return`<div class="test-category">
-      <div class="test-cat-header">${cat}</div>
-      <div class="test-check-grid">
-        ${tests.map(t=>`<label class="test-check-item">
-          <input type="checkbox" class="test-cb" data-id="${t.sr}" onchange="${onchange}"> ${t.name}
-        </label>`).join('')}
-      </div>
-    </div>`;
+    return`<div class="test-category"><div class="test-cat-header">${cat}</div><div class="test-check-grid">${
+      tests.map(t=>`<label class="test-check-item"><input type="checkbox" class="s-test-cb" value="${t.name}" style="width:13px;height:13px;accent-color:var(--teal)"> ${t.name}</label>`).join('')
+    }</div></div>`;
   }).join('');
 }
 
-function buildSampleTestList(){buildTestSelector('s-test-list','');}
+// ── QUOTE BUILDER ──────────────────────────────────────────────────────
+function buildQuoteSelector(){
+  const nabl=document.getElementById('q-nabl').value;
+  const cats=[...new Set(PRICE_DATA.map(t=>t.cat))];
+  // track which groups have been shown
+  const shownGroups=new Set();
+  document.getElementById('q-test-selector').innerHTML=cats.map(cat=>{
+    const tests=PRICE_DATA.filter(t=>t.cat===cat);
+    const items=tests.map(t=>{
+      if(t.groupId){
+        if(shownGroups.has(t.groupId))return''; // show only once
+        shownGroups.add(t.groupId);
+        const g=GROUPS[t.groupId];
+        const rate=nabl==='nabl'&&g.nabl?g.nabl:g.nonNabl;
+        const testsInGroup=PRICE_DATA.filter(x=>x.groupId===t.groupId).map(x=>x.name).join(' + ');
+        return`<label class="test-check-item" style="grid-column:span 2">
+          <input type="checkbox" class="q-test-cb" data-type="group" data-groupid="${t.groupId}" data-rate="${rate}" data-name="${g.label}" onchange="onTestCheck(this)" style="width:13px;height:13px;accent-color:var(--teal)">
+          <span>${g.label}</span>
+          <span class="group-badge">GROUP</span>
+          <span style="font-size:10px;color:var(--text3);margin-left:4px">₹${rate} (covers: ${testsInGroup})</span>
+        </label>`;
+      } else {
+        const rate=getRate(t,nabl);
+        return`<label class="test-check-item">
+          <input type="checkbox" class="q-test-cb" data-type="single" data-sr="${t.sr}" data-rate="${rate}" data-name="${t.name}" onchange="onTestCheck(this)" style="width:13px;height:13px;accent-color:var(--teal)">
+          ${t.name}
+        </label>`;
+      }
+    }).join('');
+    return`<div class="test-category"><div class="test-cat-header">${cat}</div><div class="test-check-grid">${items}</div></div>`;
+  }).join('');
+}
 
-function buildQuoteTests(){
-  buildTestSelector('quote-test-selector','calcTotal()');
+function rebuildQuoteSelector(){
+  // preserve checked state by name
+  const checked=new Set();
+  document.querySelectorAll('#q-test-selector .q-test-cb:checked').forEach(cb=>checked.add(cb.dataset.name));
+  buildQuoteSelector();
+  document.querySelectorAll('#q-test-selector .q-test-cb').forEach(cb=>{if(checked.has(cb.dataset.name))cb.checked=true;});
+  // rebuild lines from scratch
+  quoteLines=[];
+  document.querySelectorAll('#q-test-selector .q-test-cb:checked').forEach(cb=>addLineFromCb(cb));
+  renderQuoteLines();calcTotal();
+}
+function rebuildQuoteLines(){rebuildQuoteSelector();}
+
+function onTestCheck(cb){
+  if(cb.checked){addLineFromCb(cb);}
+  else{
+    const key=cb.dataset.type==='group'?'g:'+cb.dataset.groupid:'s:'+cb.dataset.sr;
+    quoteLines=quoteLines.filter(l=>l.key!==key);
+  }
+  renderQuoteLines();calcTotal();
+}
+
+function addLineFromCb(cb){
+  const key=cb.dataset.type==='group'?'g:'+cb.dataset.groupid:'s:'+cb.dataset.sr;
+  if(quoteLines.find(l=>l.key===key))return;
+  quoteLines.push({key,type:cb.dataset.type,name:cb.dataset.name,rate:parseInt(cb.dataset.rate),qty:1});
+}
+
+function renderQuoteLines(){
+  const sec=document.getElementById('q-lines-section');
+  const container=document.getElementById('q-lines');
+  if(!quoteLines.length){sec.classList.add('hidden');return;}
+  sec.classList.remove('hidden');
+  container.innerHTML=quoteLines.map((l,i)=>`
+    <div class="quote-line" id="ql-${i}">
+      <span class="line-name">${l.name}${l.type==='group'?'<span class="group-badge">GROUP</span>':''}</span>
+      <span class="line-rate">₹${l.rate.toLocaleString('en-IN')}</span>
+      <div class="line-qty"><input type="number" min="1" value="${l.qty}" style="width:56px;padding:4px 6px;font-size:12px" oninput="updateQty(${i},this.value)"></div>
+      <span class="line-total" id="lt-${i}">₹${(l.rate*l.qty).toLocaleString('en-IN')}</span>
+      <button class="remove-btn" onclick="removeLine(${i})">✕</button>
+    </div>`).join('');
+}
+
+function updateQty(i,v){
+  const qty=Math.max(1,parseInt(v)||1);
+  quoteLines[i].qty=qty;
+  const lt=document.getElementById('lt-'+i);
+  if(lt)lt.textContent='₹'+(quoteLines[i].rate*qty).toLocaleString('en-IN');
   calcTotal();
 }
 
-// ── SAMPLES ────────────────────────────────────────────────────────────
-function addSample(){
-  const client=document.getElementById('s-client').value.trim();
-  const material=document.getElementById('s-material').value;
-  if(!client||!material){alert('Client name and material type are required.');return;}
-  const tests=[...document.querySelectorAll('#s-test-list .test-cb:checked')].map(x=>{
-    const t=PRICE_DATA.find(p=>p.sr===x.dataset.id);return t?t.name:x.dataset.id;
+function removeLine(i){
+  const line=quoteLines[i];
+  // uncheck the corresponding checkbox
+  document.querySelectorAll('#q-test-selector .q-test-cb').forEach(cb=>{
+    const key=cb.dataset.type==='group'?'g:'+cb.dataset.groupid:'s:'+cb.dataset.sr;
+    if(key===line.key)cb.checked=false;
   });
-  if(!tests.length){alert('Select at least one test.');return;}
-  const s={
-    id:genId('SMP',samples),client,email:document.getElementById('s-email').value,
-    material,qty:document.getElementById('s-qty').value,tests,
-    nabl:document.getElementById('s-nabl').value,
-    priority:document.getElementById('s-priority').value,
-    days:document.getElementById('s-days').value,
-    std:document.getElementById('s-std').value,
-    remarks:document.getElementById('s-remarks').value,
-    status:'Received',date:new Date().toLocaleDateString('en-IN')
-  };
-  samples.unshift(s);save();closeModal('sample');
-  ['s-client','s-email','s-qty','s-remarks','s-std'].forEach(i=>document.getElementById(i).value='');
-  document.getElementById('s-material').value='';document.getElementById('s-days').value='7';
-  renderSamples();renderDash();
+  quoteLines.splice(i,1);
+  renderQuoteLines();calcTotal();
 }
 
-function renderSamples(){
-  const q=(document.getElementById('sample-search')?.value||'').toLowerCase();
-  const filtered=q?samples.filter(s=>s.client.toLowerCase().includes(q)||s.id.toLowerCase().includes(q)||s.material.toLowerCase().includes(q)):samples;
-  const tb=document.getElementById('samples-table');
-  if(!filtered.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No samples registered yet.</td></tr>`;return;}
-  tb.innerHTML=filtered.map(s=>`<tr>
-    <td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td>
-    <td class="strong">${s.client}</td><td>${s.material}</td>
-    <td style="font-size:12px">${s.tests.slice(0,2).join(', ')}${s.tests.length>2?` +${s.tests.length-2} more`:''}</td>
-    <td><span class="badge ${s.nabl==='nabl'?'badge-purple':'badge-gray'}">${s.nabl==='nabl'?'NABL':'Non-NABL'}</span></td>
-    <td>${statusBadge(s.status)}</td><td>${s.date}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="openStatusModal('${s.id}')">Update</button></td>
-  </tr>`).join('');
-  document.getElementById('sb-active').textContent=samples.filter(s=>s.status!=='Done'&&s.status!=='Dispatched').length;
-}
+// Ozone rate tables: base charge, per-hr rate for Non-NABL and NABL
+const OZONE_RATES={
+  '25': {baseNonNabl:6600, baseNabl:null,  hrNonNabl:130, hrNabl:null},
+  '50': {baseNonNabl:6000, baseNabl:6000,  hrNonNabl:120, hrNabl:120},
+  '100':{baseNonNabl:8500, baseNabl:8650,  hrNonNabl:125, hrNabl:125},
+  '200':{baseNonNabl:10150,baseNabl:10300, hrNonNabl:190, hrNabl:190},
+};
 
-function statusBadge(st){
-  const m={Received:'badge-blue','In Queue':'badge-purple',Testing:'badge-amber',Analysis:'badge-amber',Done:'badge-teal',Dispatched:'badge-teal'};
-  return`<span class="badge ${m[st]||'badge-blue'}">${st}</span>`;
+function calcOzone(nabl){
+  const enabled=document.getElementById('oz-enable')?.checked;
+  if(!enabled)return 0;
+  const pphm=document.getElementById('oz-pphm')?.value||'25';
+  const r=OZONE_RATES[pphm];
+  const base=nabl==='nabl'&&r.baseNabl?r.baseNabl:r.baseNonNabl;
+  const hrRate=nabl==='nabl'&&r.hrNabl?r.hrNabl:r.hrNonNabl;
+  const extraHrs=Math.max(0,parseInt(document.getElementById('oz-extrahrs')?.value)||0);
+  const numSamples=Math.max(1,parseInt(document.getElementById('oz-samples')?.value)||1);
+  // first sample full charge; additional samples at 60%
+  const firstSample=base+extraHrs*hrRate;
+  const additionalSamples=(numSamples-1)*firstSample*0.6;
+  const total=Math.round(firstSample+additionalSamples);
+  // show breakdown
+  const bd=document.getElementById('oz-breakdown');
+  if(bd){
+    let lines=`Base (${pphm} PPHM, 48 hrs): ₹${base.toLocaleString('en-IN')}`;
+    if(extraHrs>0)lines+=` + ${extraHrs} extra hrs × ₹${hrRate} = ₹${(extraHrs*hrRate).toLocaleString('en-IN')}`;
+    lines+=` → 1st sample: ₹${firstSample.toLocaleString('en-IN')}`;
+    if(numSamples>1)lines+=` | ${numSamples-1} add. sample(s) @ 60%: ₹${Math.round(additionalSamples).toLocaleString('en-IN')}`;
+    lines+=` | Total: ₹${total.toLocaleString('en-IN')}`;
+    bd.textContent=lines;
+    bd.style.display='block';
+  }
+  const disp=document.getElementById('oz-display');
+  if(disp)disp.value='₹'+total.toLocaleString('en-IN');
+  return total;
 }
-
-function openStatusModal(id){
-  statusTarget=id;
-  const s=samples.find(x=>x.id===id);
-  document.getElementById('status-select').value=s.status;
-  document.getElementById('modal-status').classList.remove('hidden');
-}
-function confirmStatus(){
-  const s=samples.find(x=>x.id===statusTarget);
-  if(s){s.status=document.getElementById('status-select').value;save();}
-  closeModal('status');renderSamples();renderDash();
-}
-
-// ── QUOTES ─────────────────────────────────────────────────────────────
-function getRate(t,nabl){return nabl==='nabl'&&t.nabl?t.nabl:t.nonNabl;}
 
 function calcTotal(){
   const nabl=document.getElementById('q-nabl')?.value||'non-nabl';
-  let testsSub=0;let selCount=0;
-  document.querySelectorAll('#quote-test-selector .test-cb:checked').forEach(cb=>{
-    const t=PRICE_DATA.find(p=>p.sr===cb.dataset.id);
-    if(t){testsSub+=getRate(t,nabl);selCount++;}
-  });
-  document.getElementById('q-selected-count').textContent=selCount+' selected';
-
-  const condRates=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
+  // tests subtotal
+  const testsSub=quoteLines.reduce((a,l)=>a+l.rate*l.qty,0);
+  // conditioning
+  const condDefs=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
   let condTotal=0;
-  condRates.forEach(c=>{
+  condDefs.forEach(c=>{
     const cb=document.getElementById('c-'+c.id);
     const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;
-    if(cb&&cb.checked)condTotal+=c.rate*days;
+    const amt=cb&&cb.checked?c.rate*days:0;
+    condTotal+=amt;
+    const lbl=document.getElementById('cl-'+c.id);
+    if(lbl)lbl.textContent=amt>0?'₹'+amt.toLocaleString('en-IN'):'';
   });
-
+  // ozone
+  const ozoneTotal=calcOzone(nabl);
+  if(!document.getElementById('oz-enable')?.checked){
+    const bd=document.getElementById('oz-breakdown');if(bd)bd.style.display='none';
+    const disp=document.getElementById('oz-display');if(disp)disp.value='₹0';
+  }
   const mould=parseInt(document.getElementById('q-mould')?.value)||0;
   const disc=parseFloat(document.getElementById('q-disc')?.value)||0;
   const gstPct=parseFloat(document.getElementById('q-gst')?.value)||18;
-
-  const rawSub=testsSub+condTotal+mould;
+  const rawSub=testsSub+condTotal+ozoneTotal+mould;
   const discAmt=rawSub*disc/100;
   const afterDisc=rawSub-discAmt;
   const gstAmt=afterDisc*gstPct/100;
   const total=afterDisc+gstAmt;
-
   document.getElementById('qt-tests').textContent='₹'+testsSub.toLocaleString('en-IN');
   document.getElementById('qt-cond').textContent='₹'+condTotal.toLocaleString('en-IN');
+  document.getElementById('qt-ozone').textContent='₹'+ozoneTotal.toLocaleString('en-IN');
   document.getElementById('qt-mould').textContent='₹'+mould.toLocaleString('en-IN');
   document.getElementById('qt-disc').textContent='— ₹'+Math.round(discAmt).toLocaleString('en-IN');
-  document.getElementById('qt-gst').textContent='₹'+Math.round(gstAmt).toLocaleString('en-IN');
+  document.getElementById('qt-gst-amt').textContent='₹'+Math.round(gstAmt).toLocaleString('en-IN');
   document.getElementById('qt-total').textContent='₹'+Math.round(total).toLocaleString('en-IN');
 }
 
 function addQuote(){
   const client=document.getElementById('q-client').value.trim();
   if(!client){alert('Client name required.');return;}
+  if(!quoteLines.length){alert('Select at least one test.');return;}
   const nabl=document.getElementById('q-nabl').value;
-  const selectedTests=[];let testsSub=0;
-  document.querySelectorAll('#quote-test-selector .test-cb:checked').forEach(cb=>{
-    const t=PRICE_DATA.find(p=>p.sr===cb.dataset.id);
-    if(t){selectedTests.push(t.name);testsSub+=getRate(t,nabl);}
-  });
-  if(!selectedTests.length){alert('Select at least one test.');return;}
+  const testsSub=quoteLines.reduce((a,l)=>a+l.rate*l.qty,0);
+  const condDefs=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
+  let condTotal=0;
+  condDefs.forEach(c=>{const cb=document.getElementById('c-'+c.id);const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;if(cb&&cb.checked)condTotal+=c.rate*days;});
+  const mould=parseInt(document.getElementById('q-mould').value)||0;
   const disc=parseFloat(document.getElementById('q-disc').value)||0;
   const gstPct=parseFloat(document.getElementById('q-gst').value)||18;
-  const mould=parseInt(document.getElementById('q-mould').value)||0;
-  const condRates=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
-  let condTotal=0;
-  condRates.forEach(c=>{const cb=document.getElementById('c-'+c.id);const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;if(cb&&cb.checked)condTotal+=c.rate*days;});
-  const rawSub=testsSub+condTotal+mould;
-  const total=Math.round(rawSub*(1-disc/100)*(1+gstPct/100));
-  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:selectedTests,nabl,amount:total,status:'Sent',date:new Date().toLocaleDateString('en-IN')});
+  const ozoneTotal=calcOzone(nabl);
+  const total=Math.round((testsSub+condTotal+ozoneTotal+mould)*(1-disc/100)*(1+gstPct/100));
+  const testNames=quoteLines.map(l=>l.name+(l.qty>1?' ×'+l.qty:''));
+  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:testNames,lines:JSON.parse(JSON.stringify(quoteLines)),nabl,amount:total,status:'Sent',date:new Date().toLocaleDateString('en-IN')});
   save();closeModal('quote');renderQuotes();
 }
 
@@ -840,7 +769,8 @@ function renderQuotes(){
     <td style="font-size:12px">${q.tests.slice(0,2).join(', ')}${q.tests.length>2?` +${q.tests.length-2} more`:''}</td>
     <td><span class="badge ${q.nabl==='nabl'?'badge-purple':'badge-gray'}">${q.nabl==='nabl'?'NABL':'Non-NABL'}</span></td>
     <td style="font-family:var(--mono);color:var(--teal)">₹${q.amount.toLocaleString('en-IN')}</td>
-    <td><span class="badge badge-blue">${q.status}</span></td><td>${q.date}</td>
+    <td><span class="badge badge-blue">${q.status}</span></td>
+    <td>${q.date}</td>
     <td><button class="btn btn-ghost btn-sm" onclick="printQuote('${q.id}')">Print</button></td>
   </tr>`).join('');
 }
@@ -848,62 +778,78 @@ function renderQuotes(){
 function printQuote(id){
   const q=quotes.find(x=>x.id===id);if(!q)return;
   const w=window.open('','_blank');
+  const lineRows=(q.lines||[]).map((l,i)=>`<tr><td>${i+1}</td><td>${l.name}${l.type==='group'?' <em style="font-size:11px;color:#888">(group)</em>':''}</td><td style="text-align:center">${l.qty}</td><td style="text-align:right">₹${l.rate.toLocaleString('en-IN')}</td><td style="text-align:right">₹${(l.rate*l.qty).toLocaleString('en-IN')}</td></tr>`).join('');
   w.document.write(`<html><head><title>Quotation ${q.id}</title><style>
-    body{font-family:Arial,sans-serif;padding:40px;max-width:640px;margin:auto;color:#222}
-    h2{color:#0a6e5c;margin-bottom:4px}
-    .meta{color:#555;font-size:13px;margin-bottom:20px;line-height:1.7}
-    table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
-    th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f0f9f6;color:#0a6e5c}
+    body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto;color:#222}
+    h2{color:#0a6e5c;margin-bottom:4px}.meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+    th,td{border:1px solid #ddd;padding:8px 12px}th{background:#f0f9f6;color:#0a6e5c;text-align:left}
     .total-box{background:#f0f9f6;border-radius:8px;padding:16px;margin-top:16px;text-align:right}
-    .total-label{font-size:11px;color:#666;margin-bottom:4px}
     .total-val{font-size:20px;font-weight:bold;color:#0a6e5c}
     .footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}
     .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#e6f9f5;color:#0a6e5c;font-weight:600}
   </style></head><body>
-    <h2>Quotation</h2>
-    <div class="meta">
-      <strong>Quote ID:</strong> ${q.id} &nbsp;&nbsp; <strong>Date:</strong> ${q.date}<br>
-      <strong>Client:</strong> ${q.client}${q.email?` &nbsp; | &nbsp; ${q.email}`:''}<br>
-      <strong>Testing type:</strong> <span class="badge">${q.nabl==='nabl'?'NABL':'Non-NABL'}</span>
-      ${q.ref?`<br><strong>Ref / PO:</strong> ${q.ref}`:''}
-    </div>
-    <table><tr><th>#</th><th>Test description</th></tr>
-      ${q.tests.map((t,i)=>`<tr><td>${i+1}</td><td>${t}</td></tr>`).join('')}
-    </table>
-    <div class="total-box"><div class="total-label">Total (incl. GST)</div><div class="total-val">₹${q.amount.toLocaleString('en-IN')}</div></div>
-    <div class="footer">This is a system-generated quotation. Valid for 30 days from date of issue.<br>All rates are subject to applicable taxes as stated above.</div>
+    <h2>Quotation — ${q.id}</h2>
+    <div class="meta"><strong>Date:</strong> ${q.date} &nbsp;&nbsp; <strong>Client:</strong> ${q.client}${q.email?' | '+q.email:''}<br>
+    <strong>Testing type:</strong> <span class="badge">${q.nabl==='nabl'?'NABL':'Non-NABL'}</span>${q.ref?' &nbsp;&nbsp; <strong>Ref/PO:</strong> '+q.ref:''}</div>
+    <table><tr><th>#</th><th>Test / Group</th><th style="text-align:center">Qty</th><th style="text-align:right">Rate (₹)</th><th style="text-align:right">Amount (₹)</th></tr>
+    ${lineRows}</table>
+    <div class="total-box"><div style="font-size:11px;color:#666;margin-bottom:4px">Total (incl. GST)</div><div class="total-val">₹${q.amount.toLocaleString('en-IN')}</div></div>
+    <div class="footer">System-generated quotation. Valid for 30 days from date of issue.</div>
   </body></html>`);w.document.close();w.print();
 }
+
+// ── SAMPLES ────────────────────────────────────────────────────────────
+function addSample(){
+  const client=document.getElementById('s-client').value.trim();
+  const material=document.getElementById('s-material').value;
+  if(!client||!material){alert('Client name and material type are required.');return;}
+  const tests=[...document.querySelectorAll('#s-test-list .s-test-cb:checked')].map(x=>x.value);
+  if(!tests.length){alert('Select at least one test.');return;}
+  samples.unshift({id:genId('SMP',samples),client,email:document.getElementById('s-email').value,material,qty:document.getElementById('s-qty').value,tests,nabl:document.getElementById('s-nabl').value,priority:document.getElementById('s-priority').value,days:document.getElementById('s-days').value,std:document.getElementById('s-std').value,remarks:document.getElementById('s-remarks').value,status:'Received',date:new Date().toLocaleDateString('en-IN')});
+  save();closeModal('sample');
+  ['s-client','s-email','s-qty','s-remarks','s-std'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('s-material').value='';document.getElementById('s-days').value='7';
+  renderSamples();renderDash();
+}
+function renderSamples(){
+  const q=(document.getElementById('sample-search')?.value||'').toLowerCase();
+  const f=q?samples.filter(s=>s.client.toLowerCase().includes(q)||s.id.toLowerCase().includes(q)||s.material.toLowerCase().includes(q)):samples;
+  const tb=document.getElementById('samples-table');
+  if(!f.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No samples yet.</td></tr>`;return;}
+  tb.innerHTML=f.map(s=>`<tr>
+    <td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td><td class="strong">${s.client}</td><td>${s.material}</td>
+    <td style="font-size:12px">${s.tests.slice(0,2).join(', ')}${s.tests.length>2?` +${s.tests.length-2} more`:''}</td>
+    <td><span class="badge ${s.nabl==='nabl'?'badge-purple':'badge-gray'}">${s.nabl==='nabl'?'NABL':'Non-NABL'}</span></td>
+    <td>${statusBadge(s.status)}</td><td>${s.date}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="openStatusModal('${s.id}')">Update</button></td>
+  </tr>`).join('');
+  document.getElementById('sb-active').textContent=samples.filter(s=>s.status!=='Done'&&s.status!=='Dispatched').length;
+}
+function statusBadge(st){const m={Received:'badge-blue','In Queue':'badge-purple',Testing:'badge-amber',Analysis:'badge-amber',Done:'badge-teal',Dispatched:'badge-teal'};return`<span class="badge ${m[st]||'badge-blue'}">${st}</span>`;}
+function openStatusModal(id){statusTarget=id;const s=samples.find(x=>x.id===id);document.getElementById('status-select').value=s.status;document.getElementById('modal-status').classList.remove('hidden');}
+function confirmStatus(){const s=samples.find(x=>x.id===statusTarget);if(s){s.status=document.getElementById('status-select').value;save();}closeModal('status');renderSamples();renderDash();}
 
 // ── REPORTS ────────────────────────────────────────────────────────────
 function updateReportFields(){
   const id=document.getElementById('r-sample').value;
-  const s=samples.find(x=>x.id===id);
-  if(!s){document.getElementById('r-test-fields').innerHTML='';return;}
-  document.getElementById('r-test-fields').innerHTML=`
-    <div style="font-size:12px;color:var(--text3);margin-bottom:8px;display:grid;grid-template-columns:1fr 120px 120px;gap:8px"><span>Test</span><span>Observed value</span><span>Spec / limit</span></div>`+
-    s.tests.map(t=>`<div style="display:grid;grid-template-columns:1fr 120px 120px;gap:8px;align-items:center;margin-bottom:8px">
+  const s=samples.find(x=>x.id===id);if(!s){document.getElementById('r-test-fields').innerHTML='';return;}
+  document.getElementById('r-test-fields').innerHTML=`<div style="display:grid;grid-template-columns:1fr 110px 110px;gap:8px;font-size:11px;color:var(--text3);margin-bottom:6px"><span>Test</span><span>Observed value</span><span>Spec / Limit</span></div>`+
+    s.tests.map(t=>`<div style="display:grid;grid-template-columns:1fr 110px 110px;gap:8px;align-items:center;margin-bottom:8px">
       <span style="font-size:13px">${t}</span>
-      <input id="rv-${t.replace(/[\s\/()%°,.]+/g,'_')}" placeholder="Value" style="font-size:12px;padding:6px 8px" oninput="updatePreview()">
-      <input id="rs-${t.replace(/[\s\/()%°,.]+/g,'_')}" placeholder="Spec" style="font-size:12px;padding:6px 8px" oninput="updatePreview()">
+      <input id="rv-${t.replace(/[\s\/()%°,.']+/g,'_')}" placeholder="Value" style="font-size:12px;padding:6px 8px" oninput="updatePreview()">
+      <input id="rs-${t.replace(/[\s\/()%°,.']+/g,'_')}" placeholder="Spec" style="font-size:12px;padding:6px 8px" oninput="updatePreview()">
     </div>`).join('');
   updatePreview();
 }
-
 function updatePreview(){
-  const id=document.getElementById('r-sample').value;
-  const s=samples.find(x=>x.id===id);if(!s)return;
+  const id=document.getElementById('r-sample').value;const s=samples.find(x=>x.id===id);if(!s)return;
   const result=document.getElementById('r-result').value;
   const tester=document.getElementById('r-tester').value||'—';
   const remarks=document.getElementById('r-remarks').value||'None';
-  const rows=s.tests.map(t=>{
-    const key=t.replace(/[\s\/()%°,.]+/g,'_');
-    const val=document.getElementById('rv-'+key)?.value||'—';
-    const spec=document.getElementById('rs-'+key)?.value||'—';
-    return`  ${t.substring(0,28).padEnd(30)} ${val.padEnd(14)} ${spec}`;
-  }).join('\n');
+  const rows=s.tests.map(t=>{const key=t.replace(/[\s\/()%°,.']+/g,'_');const val=document.getElementById('rv-'+key)?.value||'—';const spec=document.getElementById('rs-'+key)?.value||'—';return`  ${t.substring(0,26).padEnd(28)} ${val.padEnd(14)} ${spec}`;}).join('\n');
   document.getElementById('report-preview').textContent=
-`TEST REPORT — ${genId('RPT',reports)}
+`TEST REPORT
 ═══════════════════════════════════════════════
 Sample ID   : ${s.id}
 Client      : ${s.client}
@@ -913,25 +859,22 @@ Date        : ${new Date().toLocaleDateString('en-IN')}
 Tested by   : ${tester}
 Result      : ${result}
 ───────────────────────────────────────────────
-TEST                           VALUE          SPEC/LIMIT
+TEST                         VALUE          SPEC/LIMIT
 ${rows}
 ───────────────────────────────────────────────
 Remarks: ${remarks}
 ═══════════════════════════════════════════════
 RubberLab Testing Laboratory`;
 }
-
 function addReport(){
-  const sid=document.getElementById('r-sample').value;
-  if(!sid){alert('Select a sample.');return;}
+  const sid=document.getElementById('r-sample').value;if(!sid){alert('Select a sample.');return;}
   const s=samples.find(x=>x.id===sid);
   reports.unshift({id:genId('RPT',reports),sampleId:sid,client:s.client,material:s.material,result:document.getElementById('r-result').value,tester:document.getElementById('r-tester').value,status:'Generated',date:new Date().toLocaleDateString('en-IN')});
   s.status='Done';save();closeModal('report');renderReports();renderSamples();renderDash();
 }
-
 function renderReports(){
   const tb=document.getElementById('reports-table');
-  if(!reports.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No reports generated yet.</td></tr>`;return;}
+  if(!reports.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No reports yet.</td></tr>`;return;}
   tb.innerHTML=reports.map(r=>`<tr>
     <td class="strong" style="font-family:var(--mono);font-size:12px">${r.id}</td>
     <td style="font-family:var(--mono);font-size:12px">${r.sampleId}</td>
@@ -941,67 +884,40 @@ function renderReports(){
     <td><button class="btn btn-ghost btn-sm" onclick="printReport('${r.id}')">Print</button></td>
   </tr>`).join('');
 }
-
 function printReport(id){
   const r=reports.find(x=>x.id===id);const s=samples.find(x=>x.id===r?.sampleId);if(!r||!s)return;
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>Report ${r.id}</title><style>
-    body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto;color:#222}
-    h2{color:#0a6e5c}
-    .meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px}
-    .result-box{display:inline-block;padding:8px 20px;border-radius:6px;font-size:16px;font-weight:bold;margin-bottom:16px}
-    .pass{background:#e6faf5;color:#0a6e5c}.fail{background:#ffe6e6;color:#c00}.cond{background:#fff7e6;color:#b36000}
-    table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
-    th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f0f9f6;color:#0a6e5c}
-    .footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}
-  </style></head><body>
-    <h2>Test Report</h2>
-    <div class="meta">
-      <strong>Report ID:</strong> ${r.id} &nbsp;&nbsp; <strong>Date:</strong> ${r.date}<br>
-      <strong>Sample ID:</strong> ${s.id} &nbsp;&nbsp; <strong>Testing type:</strong> ${s.nabl==='nabl'?'NABL':'Non-NABL'}<br>
-      <strong>Client:</strong> ${s.client} &nbsp;&nbsp; <strong>Material:</strong> ${s.material}<br>
-      ${s.std?`<strong>Standard:</strong> ${s.std}<br>`:''}
-      <strong>Tested by:</strong> ${r.tester||'—'}
-    </div>
+  w.document.write(`<html><head><title>Report ${r.id}</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto}h2{color:#0a6e5c}.meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px}.result-box{display:inline-block;padding:8px 20px;border-radius:6px;font-size:16px;font-weight:bold;margin-bottom:16px}.pass{background:#e6faf5;color:#0a6e5c}.fail{background:#ffe6e6;color:#c00}.cond{background:#fff7e6;color:#b36000}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f0f9f6;color:#0a6e5c}.footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}</style></head><body>
+    <h2>Test Report — ${r.id}</h2>
+    <div class="meta"><strong>Sample ID:</strong> ${s.id} &nbsp;&nbsp; <strong>Date:</strong> ${r.date}<br><strong>Client:</strong> ${s.client} &nbsp;&nbsp; <strong>Material:</strong> ${s.material}<br>${s.std?`<strong>Standard:</strong> ${s.std}<br>`:''}<strong>Test type:</strong> ${s.nabl==='nabl'?'NABL':'Non-NABL'} &nbsp;&nbsp; <strong>Tested by:</strong> ${r.tester||'—'}</div>
     <div class="result-box ${r.result==='Pass'?'pass':r.result==='Fail'?'fail':'cond'}">${r.result}</div>
-    <table><tr><th>#</th><th>Test</th><th>Observed value</th><th>Spec / Limit</th></tr>
-      ${s.tests.map((t,i)=>`<tr><td>${i+1}</td><td>${t}</td><td>—</td><td>—</td></tr>`).join('')}
-    </table>
-    <div class="footer">Generated by RubberLab Testing Laboratory · ${r.date}<br>This is an electronically generated report.</div>
+    <table><tr><th>#</th><th>Test</th><th>Observed value</th><th>Spec / Limit</th></tr>${s.tests.map((t,i)=>`<tr><td>${i+1}</td><td>${t}</td><td>—</td><td>—</td></tr>`).join('')}</table>
+    <div class="footer">Generated by RubberLab Testing Laboratory · ${r.date}</div>
   </body></html>`);w.document.close();w.print();
 }
 
 // ── CLIENTS ────────────────────────────────────────────────────────────
 function addClient(){
-  const company=document.getElementById('c-company').value.trim();
-  if(!company){alert('Company name required.');return;}
+  const company=document.getElementById('c-company').value.trim();if(!company){alert('Company name required.');return;}
   clients.push({company,contact:document.getElementById('c-contact').value,email:document.getElementById('c-email').value,phone:document.getElementById('c-phone').value,city:document.getElementById('c-city').value,gst:document.getElementById('c-gst').value});
-  save();closeModal('client');
-  ['c-company','c-contact','c-email','c-phone','c-city','c-gst'].forEach(i=>document.getElementById(i).value='');
-  renderClients();
+  save();closeModal('client');['c-company','c-contact','c-email','c-phone','c-city','c-gst'].forEach(i=>document.getElementById(i).value='');renderClients();
 }
-
 function renderClients(){
   const tb=document.getElementById('clients-table');
-  if(!clients.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No clients added yet.</td></tr>`;return;}
-  tb.innerHTML=clients.map(c=>{
-    const cnt=samples.filter(s=>s.client===c.company).length;
-    return`<tr><td class="strong">${c.company}</td><td>${c.contact||'—'}</td><td>${c.email||'—'}</td><td>${c.phone||'—'}</td><td>${c.city||'—'}</td><td style="font-family:var(--mono);font-size:12px">${c.gst||'—'}</td><td><span class="badge badge-teal">${cnt}</span></td></tr>`;
-  }).join('');
+  if(!clients.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No clients yet.</td></tr>`;return;}
+  tb.innerHTML=clients.map(c=>{const cnt=samples.filter(s=>s.client===c.company).length;return`<tr><td class="strong">${c.company}</td><td>${c.contact||'—'}</td><td>${c.email||'—'}</td><td>${c.phone||'—'}</td><td>${c.city||'—'}</td><td style="font-family:var(--mono);font-size:12px">${c.gst||'—'}</td><td><span class="badge badge-teal">${cnt}</span></td></tr>`;}).join('');
 }
 
 // ── PRICE LIST ─────────────────────────────────────────────────────────
 function renderPriceList(){
   const q=(document.getElementById('price-search')?.value||'').toLowerCase();
-  const filtered=q?PRICE_DATA.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q)):PRICE_DATA;
-  const tb=document.getElementById('price-table');
-  if(!filtered.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text3)">No results found.</td></tr>`;return;}
+  const f=q?PRICE_DATA.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q)):PRICE_DATA;
   const catColors={Chemical:'badge-blue',Physical:'badge-teal','Oil & Swelling':'badge-amber',Electrical:'badge-purple','Low Temperature':'badge-blue',Ozone:'badge-red',Rheology:'badge-purple',Miscellaneous:'badge-gray'};
-  tb.innerHTML=filtered.map(t=>`<tr>
+  document.getElementById('price-table').innerHTML=f.map(t=>`<tr>
     <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${t.sr}</td>
-    <td class="strong">${t.name}</td>
+    <td class="strong">${t.name}${t.groupId?'<span class="group-badge" style="margin-left:6px">GROUP</span>':''}</td>
     <td><span class="badge ${catColors[t.cat]||'badge-gray'}">${t.cat}</span></td>
-    <td style="font-family:var(--mono);color:var(--text)">₹${t.nonNabl.toLocaleString('en-IN')}</td>
+    <td style="font-family:var(--mono)">₹${t.nonNabl.toLocaleString('en-IN')}</td>
     <td style="font-family:var(--mono);color:var(--purple)">${t.nabl?'₹'+t.nabl.toLocaleString('en-IN'):'—'}</td>
     <td style="font-size:11px;color:var(--amber)">${t.remark||''}</td>
   </tr>`).join('');
@@ -1020,15 +936,10 @@ function renderDash(){
     <div class="metric-card"><div class="metric-val">${quotes.length}</div><div class="metric-label">Quotations raised</div></div>
     <div class="metric-card"><div class="metric-val">${reports.length}</div><div class="metric-label">Reports generated</div></div>`;
   const tb=document.getElementById('dash-table');
-  if(!samples.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No samples yet — register your first sample.</td></tr>`;return;}
-  tb.innerHTML=samples.slice(0,8).map(s=>`<tr onclick="showPage('samples')" style="cursor:pointer">
-    <td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td>
-    <td class="strong">${s.client}</td><td>${s.material}</td>
-    <td>${statusBadge(s.status)}</td><td>${s.date}</td>
-  </tr>`).join('');
+  if(!samples.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No samples yet.</td></tr>`;return;}
+  tb.innerHTML=samples.slice(0,8).map(s=>`<tr onclick="showPage('samples')" style="cursor:pointer"><td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td><td class="strong">${s.client}</td><td>${s.material}</td><td>${statusBadge(s.status)}</td><td>${s.date}</td></tr>`).join('');
   document.getElementById('sb-active').textContent=active;
 }
-
 renderDash();
 </script>
 </body>
