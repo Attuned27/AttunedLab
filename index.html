@@ -237,7 +237,13 @@ textarea{resize:vertical;min-height:60px}
       <!-- Test selector -->
       <div class="section-header"><span class="section-title">Select tests</span><span style="font-size:11px;color:var(--text3)">Tick to add → set quantity per line</span></div>
       <div class="info-box">💡 Tensile + Elongation + Modulus (Rubber or Plastic) are billed as one group charge × quantity. Selecting any combination charges once per sample.</div>
-      <div id="q-test-selector"></div>
+      <div style="margin-bottom:10px">
+        <div class="search-bar" style="width:100%">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="q-test-search" placeholder="Search tests e.g. tensile, hardness, ozone..." oninput="filterQuoteTests()" style="width:100%">
+        </div>
+      </div>
+      <div id="q-test-selector" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:10px"></div>
 
       <!-- Selected lines -->
       <div id="q-lines-section" class="hidden" style="margin-top:16px">
@@ -604,6 +610,41 @@ function buildQuoteSelector(){
   }).join('');
 }
 
+function filterQuoteTests(){
+  const q=(document.getElementById('q-test-search')?.value||'').toLowerCase().trim();
+  if(!q){buildQuoteSelector();// re-check previously selected
+    document.querySelectorAll('#q-test-selector .q-test-cb').forEach(cb=>{if(quoteLines.find(l=>l.key===(cb.dataset.type==='group'?'g:'+cb.dataset.groupid:'s:'+cb.dataset.sr)))cb.checked=true;});return;}
+  // flat filtered list
+  const nabl=document.getElementById('q-nabl').value;
+  const shownGroups=new Set();
+  let html='';
+  PRICE_DATA.forEach(t=>{
+    let matchName=t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q);
+    if(t.groupId){
+      if(shownGroups.has(t.groupId))return;
+      const g=GROUPS[t.groupId];
+      if(!g.label.toLowerCase().includes(q)&&!matchName)return;
+      shownGroups.add(t.groupId);
+      const rate=nabl==='nabl'&&g.nabl?g.nabl:g.nonNabl;
+      const checked=quoteLines.find(l=>l.key==='g:'+t.groupId)?'checked':'';
+      html+=`<label class="test-check-item" style="display:flex;flex-direction:row;align-items:center;gap:6px;padding:5px 6px">
+        <input type="checkbox" class="q-test-cb" data-type="group" data-groupid="${t.groupId}" data-rate="${rate}" data-name="${g.label}" onchange="onTestCheck(this)" style="width:13px;height:13px;accent-color:var(--teal)" ${checked}>
+        <span>${g.label}</span><span class="group-badge">GROUP</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:4px">₹${rate}</span>
+      </label>`;
+    } else {
+      if(!matchName)return;
+      const rate=getRate(t,nabl);
+      const checked=quoteLines.find(l=>l.key==='s:'+t.sr)?'checked':'';
+      html+=`<label class="test-check-item" style="display:flex;flex-direction:row;align-items:center;gap:6px;padding:5px 6px">
+        <input type="checkbox" class="q-test-cb" data-type="single" data-sr="${t.sr}" data-rate="${rate}" data-name="${t.name}" onchange="onTestCheck(this)" style="width:13px;height:13px;accent-color:var(--teal)" ${checked}>
+        ${t.name} <span style="font-size:10px;color:var(--text3)">₹${rate} · ${t.cat}</span>
+      </label>`;
+    }
+  });
+  document.getElementById('q-test-selector').innerHTML=html||'<div style="padding:12px;color:var(--text3);font-size:13px">No tests found.</div>';
+}
+
 function rebuildQuoteSelector(){
   // preserve checked state by name
   const checked=new Set();
@@ -756,7 +797,23 @@ function addQuote(){
   const ozoneTotal=calcOzone(nabl);
   const total=Math.round((testsSub+condTotal+ozoneTotal+mould)*(1-disc/100)*(1+gstPct/100));
   const testNames=quoteLines.map(l=>l.name+(l.qty>1?' ×'+l.qty:''));
-  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:testNames,lines:JSON.parse(JSON.stringify(quoteLines)),nabl,amount:total,status:'Sent',date:new Date().toLocaleDateString('en-IN')});
+  // snapshot conditioning for print
+  const condDefs2=[{id:'100',label:'Hot Air Ageing 100°C',rate:660},{id:'125',label:'Hot Air Ageing 125°C',rate:770},{id:'150',label:'Hot Air Ageing 150°C',rate:880},{id:'300',label:'Hot Air Ageing 300°C',rate:1200}];
+  const condLines=[];
+  condDefs2.forEach(c=>{const cb=document.getElementById('c-'+c.id);const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;if(cb&&cb.checked)condLines.push({label:c.label,days,rate:c.rate,amount:c.rate*days});});
+  // snapshot ozone for print
+  let ozoneLine=null;
+  if(document.getElementById('oz-enable')?.checked){
+    const pphm=document.getElementById('oz-pphm').value;
+    const extraHrs=parseInt(document.getElementById('oz-extrahrs')?.value)||0;
+    const numSamples=parseInt(document.getElementById('oz-samples')?.value)||1;
+    const r=OZONE_RATES[pphm];
+    const base=nabl==='nabl'&&r.baseNabl?r.baseNabl:r.baseNonNabl;
+    const hrRate=nabl==='nabl'&&r.hrNabl?r.hrNabl:r.hrNonNabl;
+    const firstSample=base+extraHrs*hrRate;
+    ozoneLine={pphm,extraHrs,numSamples,base,hrRate,firstSample,amount:ozoneTotal};
+  }
+  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:testNames,lines:JSON.parse(JSON.stringify(quoteLines)),condLines,ozoneLine,mouldAmt:mould,disc,gstPct,nabl,amount:total,status:'Sent',date:new Date().toLocaleDateString('en-IN')});
   save();closeModal('quote');renderQuotes();
 }
 
