@@ -835,25 +835,118 @@ function renderQuotes(){
 function printQuote(id){
   const q=quotes.find(x=>x.id===id);if(!q)return;
   const w=window.open('','_blank');
-  const lineRows=(q.lines||[]).map((l,i)=>`<tr><td>${i+1}</td><td>${l.name}${l.type==='group'?' <em style="font-size:11px;color:#888">(group)</em>':''}</td><td style="text-align:center">${l.qty}</td><td style="text-align:right">₹${l.rate.toLocaleString('en-IN')}</td><td style="text-align:right">₹${(l.rate*l.qty).toLocaleString('en-IN')}</td></tr>`).join('');
+  let srNo=0, rows='';
+
+  // 1. Regular test lines
+  (q.lines||[]).forEach(l=>{
+    srNo++;
+    rows+=`<tr>
+      <td style="text-align:center">${srNo}</td>
+      <td>${l.name}${l.type==='group'?' <span class="grp">GROUP</span>':''}</td>
+      <td style="text-align:center">${l.qty}</td>
+      <td style="text-align:right">&#8377;${l.rate.toLocaleString('en-IN')}</td>
+      <td style="text-align:right">&#8377;${(l.rate*l.qty).toLocaleString('en-IN')}</td>
+    </tr>`;
+  });
+
+  // 2. Conditioning / ageing lines
+  if(q.condLines&&q.condLines.length){
+    q.condLines.forEach(c=>{
+      srNo++;
+      rows+=`<tr style="background:#fffbf0">
+        <td style="text-align:center">${srNo}</td>
+        <td><strong>${c.label}</strong> &mdash; ${c.days} day${c.days>1?'s':''}</td>
+        <td style="text-align:center">&mdash;</td>
+        <td style="text-align:right">&#8377;${c.rate.toLocaleString('en-IN')}/day</td>
+        <td style="text-align:right">&#8377;${c.amount.toLocaleString('en-IN')}</td>
+      </tr>`;
+    });
+  }
+
+  // 3. Ozone optional section line
+  if(q.ozoneLine){
+    const oz=q.ozoneLine;
+    srNo++;
+    let ozDesc=`Ozone Resistance @ ${oz.pphm} PPHM / 48 hrs`;
+    if(oz.extraHrs>0) ozDesc+=` + ${oz.extraHrs} extra hr${oz.extraHrs>1?'s':''}`;
+    if(oz.numSamples>1) ozDesc+=` &mdash; ${oz.numSamples} samples (2nd onwards @ 60%)`;
+    let ozRate=`&#8377;${oz.base.toLocaleString('en-IN')} base`;
+    if(oz.extraHrs>0) ozRate+=` + &#8377;${oz.hrRate}/hr`;
+    rows+=`<tr style="background:#fff5f5">
+      <td style="text-align:center">${srNo}</td>
+      <td><strong>${ozDesc}</strong></td>
+      <td style="text-align:center">${oz.numSamples}</td>
+      <td style="text-align:right">${ozRate}</td>
+      <td style="text-align:right">&#8377;${oz.amount.toLocaleString('en-IN')}</td>
+    </tr>`;
+  }
+
+  // 4. Moulding
+  if(q.mouldAmt>0){
+    srNo++;
+    rows+=`<tr>
+      <td style="text-align:center">${srNo}</td>
+      <td>Moulding of Test Specimens</td>
+      <td style="text-align:center">&mdash;</td>
+      <td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td>
+      <td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td>
+    </tr>`;
+  }
+
+  // Totals — recalculate cleanly from saved values
+  const disc=q.disc||0;
+  const gstPct=q.gstPct||18;
+  const rawSub=Math.round(q.amount/((1-disc/100)*(1+gstPct/100)));
+  const discAmt=Math.round(rawSub*disc/100);
+  const afterDisc=rawSub-discAmt;
+  const gstAmt=Math.round(afterDisc*gstPct/100);
+
   w.document.write(`<html><head><title>Quotation ${q.id}</title><style>
-    body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto;color:#222}
-    h2{color:#0a6e5c;margin-bottom:4px}.meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:20px}
-    table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
-    th,td{border:1px solid #ddd;padding:8px 12px}th{background:#f0f9f6;color:#0a6e5c;text-align:left}
-    .total-box{background:#f0f9f6;border-radius:8px;padding:16px;margin-top:16px;text-align:right}
-    .total-val{font-size:20px;font-weight:bold;color:#0a6e5c}
-    .footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}
-    .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#e6f9f5;color:#0a6e5c;font-weight:600}
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;padding:40px;max-width:720px;margin:auto;color:#222;font-size:13px}
+    h2{color:#0a6e5c;margin-bottom:4px}
+    .meta{font-size:13px;color:#444;line-height:1.9;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px;border-left:4px solid #0a6e5c}
+    table{width:100%;border-collapse:collapse;margin:12px 0}
+    th,td{border:1px solid #ccc;padding:8px 10px}
+    th{background:#0a6e5c;color:#fff;font-size:12px;text-align:left}
+    .grp{font-size:10px;border:1px solid #ccc;padding:1px 4px;border-radius:3px;margin-left:4px;color:#888}
+    .tot-wrap{display:flex;justify-content:flex-end;margin-top:8px}
+    .tot-table{border-collapse:collapse;min-width:300px}
+    .tot-table td{padding:5px 12px;font-size:13px;border:none}
+    .tot-table .grand{font-size:16px;font-weight:bold;color:#0a6e5c;border-top:2px solid #0a6e5c;padding-top:8px}
+    .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#e6f9f5;color:#0a6e5c;font-weight:600;border:1px solid #b2e8d8}
+    .footer{margin-top:24px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:10px}
   </style></head><body>
-    <h2>Quotation — ${q.id}</h2>
-    <div class="meta"><strong>Date:</strong> ${q.date} &nbsp;&nbsp; <strong>Client:</strong> ${q.client}${q.email?' | '+q.email:''}<br>
-    <strong>Testing type:</strong> <span class="badge">${q.nabl==='nabl'?'NABL':'Non-NABL'}</span>${q.ref?' &nbsp;&nbsp; <strong>Ref/PO:</strong> '+q.ref:''}</div>
-    <table><tr><th>#</th><th>Test / Group</th><th style="text-align:center">Qty</th><th style="text-align:right">Rate (₹)</th><th style="text-align:right">Amount (₹)</th></tr>
-    ${lineRows}</table>
-    <div class="total-box"><div style="font-size:11px;color:#666;margin-bottom:4px">Total (incl. GST)</div><div class="total-val">₹${q.amount.toLocaleString('en-IN')}</div></div>
-    <div class="footer">System-generated quotation. Valid for 30 days from date of issue.</div>
-  </body></html>`);w.document.close();w.print();
+    <h2>Quotation</h2>
+    <div class="meta">
+      <strong>Quote No:</strong> ${q.id} &nbsp;&nbsp; <strong>Date:</strong> ${q.date}<br>
+      <strong>Client:</strong> ${q.client}${q.email?' &nbsp;|&nbsp; <strong>Email:</strong> '+q.email:''}<br>
+      <strong>Testing type:</strong> <span class="badge">${q.nabl==='nabl'?'NABL Accredited':'Non-NABL'}</span>${q.ref?' &nbsp;&nbsp; <strong>Ref/PO:</strong> '+q.ref:''}
+    </div>
+    <table>
+      <tr>
+        <th style="width:48px;text-align:center">Sr. No</th>
+        <th>Test Description</th>
+        <th style="text-align:center;width:50px">Qty</th>
+        <th style="text-align:right;width:130px">Rate (&#8377;)</th>
+        <th style="text-align:right;width:120px">Amount (&#8377;)</th>
+      </tr>
+      ${rows}
+    </table>
+    <div class="tot-wrap">
+      <table class="tot-table">
+        ${disc>0?`<tr><td style="color:#555">Subtotal</td><td style="text-align:right">&#8377;${rawSub.toLocaleString('en-IN')}</td></tr>
+        <tr><td style="color:#c00">Discount (${disc}%)</td><td style="text-align:right;color:#c00">&minus; &#8377;${discAmt.toLocaleString('en-IN')}</td></tr>`:''}
+        <tr><td style="color:#555">GST (${gstPct}%)</td><td style="text-align:right">&#8377;${gstAmt.toLocaleString('en-IN')}</td></tr>
+        <tr><td class="grand">Total Payable</td><td class="grand" style="text-align:right">&#8377;${q.amount.toLocaleString('en-IN')}</td></tr>
+      </table>
+    </div>
+    <div class="footer">
+      This is a system-generated quotation. Valid for 30 days from date of issue.<br>
+      All charges are subject to applicable GST as stated above.
+    </div>
+  </body></html>`);
+  w.document.close();w.print();
 }
 
 // ── SAMPLES ────────────────────────────────────────────────────────────
