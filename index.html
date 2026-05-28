@@ -231,7 +231,7 @@ textarea{resize:vertical;min-height:60px}
     <div class="modal-header"><div class="modal-title">Generate quotation</div><button class="btn btn-ghost btn-sm" onclick="closeModal('quote')">✕</button></div>
     <div class="modal-body">
       <div class="form-row"><div class="form-group"><label>Client name *</label><input id="q-client" placeholder="Company name" list="client-names2"><datalist id="client-names2"></datalist></div><div class="form-group"><label>Client email</label><input id="q-email" placeholder="email@company.com"></div></div>
-      <div class="form-row"><div class="form-group"><label>Testing type</label><select id="q-nabl" onchange="rebuildQuoteLines()"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select></div><div class="form-group"><label>Reference / PO No.</label><input id="q-ref" placeholder="Optional"></div></div>
+      <div class="form-row three"><div class="form-group"><label>Testing type</label><select id="q-nabl" onchange="rebuildQuoteLines()"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select></div><div class="form-group"><label>Reference / PO No.</label><input id="q-ref" placeholder="Optional"></div><div class="form-group"><label>Quote status</label><select id="q-status"><option value="Draft">Draft</option><option value="Sent">Sent</option><option value="Accepted">Accepted</option><option value="Rejected">Rejected</option></select></div></div>
       <div class="divider"></div>
 
       <!-- Test selector -->
@@ -247,7 +247,10 @@ textarea{resize:vertical;min-height:60px}
 
       <!-- Selected lines -->
       <div id="q-lines-section" class="hidden" style="margin-top:16px">
-        <div class="section-header" style="margin-bottom:8px"><span class="section-title">Selected tests &amp; quantities</span></div>
+        <div class="section-header" style="margin-bottom:8px">
+          <span class="section-title">Selected tests &amp; quantities</span>
+          <button class="btn btn-ghost btn-sm" onclick="addCustomLine()" style="font-size:11px">+ Add custom test</button>
+        </div>
         <div class="quote-lines-header"><span>Test / Group</span><span>Rate (₹)</span><span>Qty</span><span style="text-align:right">Line total</span><span></span></div>
         <div id="q-lines"></div>
       </div>
@@ -256,11 +259,17 @@ textarea{resize:vertical;min-height:60px}
       <div class="cond-section" style="margin-top:16px">
         <div class="cond-title">Hot Air Ageing / Conditioning (optional)</div>
         <div class="cond-row" style="font-size:11px;color:var(--text3);margin-bottom:6px"><span>Type</span><span>Rate</span><span>Days</span><span style="text-align:right">Charge</span></div>
-        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-100" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 100°C</label><span style="font-family:var(--mono);color:var(--text3)">₹660/day</span><input type="number" id="cd-100" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-100" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
-        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-125" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 125°C</label><span style="font-family:var(--mono);color:var(--text3)">₹770/day</span><input type="number" id="cd-125" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-125" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
-        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-150" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 150°C</label><span style="font-family:var(--mono);color:var(--text3)">₹880/day</span><input type="number" id="cd-150" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-150" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
-        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-300" style="accent-color:var(--teal)" onchange="calcTotal()"> Hot Air 300°C</label><span style="font-family:var(--mono);color:var(--text3)">₹1200/day</span><input type="number" id="cd-300" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-300" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
-        <div class="note-box">Ageing charges are common if multiple samples share the same ageing conditions in one order.</div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-100" style="accent-color:var(--teal)" onchange="toggleAgeingTests('100')"> Hot Air 100°C</label><span style="font-family:var(--mono);color:var(--text3)">₹660/day</span><input type="number" id="cd-100" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-100" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div id="at-100" class="hidden" style="padding:8px 12px 4px 20px;background:rgba(245,166,35,0.05);border-radius:6px;margin-bottom:4px"></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-125" style="accent-color:var(--teal)" onchange="toggleAgeingTests('125')"> Hot Air 125°C</label><span style="font-family:var(--mono);color:var(--text3)">₹770/day</span><input type="number" id="cd-125" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-125" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div id="at-125" class="hidden" style="padding:8px 12px 4px 20px;background:rgba(245,166,35,0.05);border-radius:6px;margin-bottom:4px"></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-150" style="accent-color:var(--teal)" onchange="toggleAgeingTests('150')"> Hot Air 150°C</label><span style="font-family:var(--mono);color:var(--text3)">₹880/day</span><input type="number" id="cd-150" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-150" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div id="at-150" class="hidden" style="padding:8px 12px 4px 20px;background:rgba(245,166,35,0.05);border-radius:6px;margin-bottom:4px"></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-70" style="accent-color:var(--teal)" onchange="toggleAgeingTests('70')"> Hot Air 70°C</label><span style="font-family:var(--mono);color:var(--text3)">₹550/day</span><input type="number" id="cd-70" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-70" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div id="at-70" class="hidden" style="padding:8px 12px 4px 20px;background:rgba(245,166,35,0.05);border-radius:6px;margin-bottom:4px"></div>
+        <div class="cond-row"><label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="c-300" style="accent-color:var(--teal)" onchange="toggleAgeingTests('300')"> Hot Air 300°C</label><span style="font-family:var(--mono);color:var(--text3)">₹1200/day</span><input type="number" id="cd-300" value="1" min="1" style="font-size:12px;padding:4px 6px;width:56px" oninput="calcTotal()"><span id="cl-300" style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right"></span></div>
+        <div id="at-300" class="hidden" style="padding:8px 12px 4px 20px;background:rgba(245,166,35,0.05);border-radius:6px;margin-bottom:4px"></div>
+        <div class="note-box">Ageing charges are common if multiple samples share the same ageing conditions in one order. Tick an ageing temp to select tests run after ageing.</div>
       </div>
 
       <!-- Ozone -->
@@ -329,6 +338,26 @@ textarea{resize:vertical;min-height:60px}
       <div class="form-row"><div class="form-group"><label>City</label><input id="c-city" placeholder="Mumbai"></div><div class="form-group"><label>GSTIN</label><input id="c-gst" placeholder="22AAAAA0000A1Z5"></div></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('client')">Cancel</button><button class="btn btn-primary" onclick="addClient()">Add client</button></div>
+  </div>
+</div>
+
+<!-- PRINT DIALOG MODAL -->
+<div class="modal-overlay hidden" id="modal-printdialog">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header"><div class="modal-title">Print quotation</div><button class="btn btn-ghost btn-sm" onclick="closeModal('printdialog')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Choose which version to print:</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-primary" style="justify-content:flex-start;padding:12px 16px" onclick="doPrint('detailed')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <div style="text-align:left"><div style="font-weight:600">Detailed (Internal)</div><div style="font-size:11px;opacity:.8">All tests listed with individual rates &amp; amounts</div></div>
+        </button>
+        <button class="btn btn-ghost" style="justify-content:flex-start;padding:12px 16px;border:1px solid var(--border2)" onclick="doPrint('summary')">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <div style="text-align:left"><div style="font-weight:600;color:var(--text)">Summary (For Client)</div><div style="font-size:11px;color:var(--text3)">Test list only — total amount, no individual rates</div></div>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -561,7 +590,17 @@ function openModal(m){
   }
   document.getElementById('modal-'+m).classList.remove('hidden');
 }
-function closeModal(m){document.getElementById('modal-'+m).classList.add('hidden');}
+function closeModal(m){
+  document.getElementById('modal-'+m).classList.add('hidden');
+  if(m==='quote'){
+    // reset edit mode
+    const qm=document.getElementById('modal-quote');
+    if(qm){qm.dataset.editId='';
+      const t=qm.querySelector('.modal-title');if(t)t.textContent='Generate quotation';
+      const b=qm.querySelector('.modal-footer .btn-primary');if(b)b.textContent='Save quotation';
+    }
+  }
+}
 function updateClientDatalist(){
   ['client-names','client-names2'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.innerHTML=clients.map(c=>`<option value="${c.company}">`).join('');});
 }
@@ -680,9 +719,12 @@ function renderQuoteLines(){
   sec.classList.remove('hidden');
   container.innerHTML=quoteLines.map((l,i)=>`
     <div class="quote-line" id="ql-${i}">
-      <span class="line-name">${l.name}${l.type==='group'?'<span class="group-badge">GROUP</span>':''}</span>
-      <span class="line-rate">₹${l.rate.toLocaleString('en-IN')}</span>
-      <div class="line-qty"><input type="number" min="1" value="${l.qty}" style="width:56px;padding:4px 6px;font-size:12px" oninput="updateQty(${i},this.value)"></div>
+      <span class="line-name">${l.name}${l.type==='group'?'<span class="group-badge">GROUP</span>':l.type==='custom'?'<span class="group-badge" style="background:var(--blue-dim);color:var(--blue)">CUSTOM</span>':''}</span>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="font-size:11px;color:var(--text3)">₹</span>
+        <input type="number" min="0" value="${l.rate}" style="width:72px;padding:3px 5px;font-size:12px;font-family:var(--mono)" oninput="updateRate(${i},this.value)" title="Edit rate">
+      </div>
+      <div class="line-qty"><input type="number" min="1" value="${l.qty}" style="width:50px;padding:4px 6px;font-size:12px" oninput="updateQty(${i},this.value)"></div>
       <span class="line-total" id="lt-${i}">₹${(l.rate*l.qty).toLocaleString('en-IN')}</span>
       <button class="remove-btn" onclick="removeLine(${i})">✕</button>
     </div>`).join('');
@@ -694,6 +736,78 @@ function updateQty(i,v){
   const lt=document.getElementById('lt-'+i);
   if(lt)lt.textContent='₹'+(quoteLines[i].rate*qty).toLocaleString('en-IN');
   calcTotal();
+}
+
+function updateRate(i,v){
+  const rate=Math.max(0,parseInt(v)||0);
+  quoteLines[i].rate=rate;
+  const lt=document.getElementById('lt-'+i);
+  if(lt)lt.textContent='₹'+(rate*quoteLines[i].qty).toLocaleString('en-IN');
+  calcTotal();
+}
+
+function addCustomLine(){
+  const name=prompt('Enter test name:');
+  if(!name||!name.trim())return;
+  const rateStr=prompt('Enter charge (₹):','0');
+  const rate=Math.max(0,parseInt(rateStr)||0);
+  const key='custom:'+Date.now();
+  quoteLines.push({key,type:'custom',name:name.trim(),rate,qty:1});
+  renderQuoteLines();
+  document.getElementById('q-lines-section').classList.remove('hidden');
+  calcTotal();
+}
+
+// ── AGEING SUB-TESTS ──────────────────────────────────────────────────
+const AGEING_TESTS=[
+  {sr:'42',name:'Tensile Strength (Rubber)',nonNabl:2100,nabl:2100,groupId:'rubber-mech'},
+  {sr:'43',name:'Elongation at Break (Rubber)',nonNabl:2100,nabl:2100,groupId:'rubber-mech'},
+  {sr:'44',name:'Modulus 100%/200%/300% (Rubber)',nonNabl:2100,nabl:2100,groupId:'rubber-mech'},
+  {sr:'41a',name:'Hardness — Shore A',nonNabl:650,nabl:650},
+  {sr:'41b',name:'Hardness — Shore D',nonNabl:900,nabl:null},
+  {sr:'48',name:'Tear Strength',nonNabl:2100,nabl:2100},
+  {sr:'64',name:'Compression Set',nonNabl:2050,nabl:2100},
+  {sr:'50',name:'Specific Gravity',nonNabl:1450,nabl:1500},
+  {sr:'23',name:'Rebound Resilience',nonNabl:1550,nabl:1650},
+];
+const AGEING_GROUPS={'rubber-mech':{label:'Tensile + Elongation + Modulus (Rubber)',nonNabl:2100,nabl:2100}};
+
+function toggleAgeingTests(temp){
+  const cb=document.getElementById('c-'+temp);
+  const panel=document.getElementById('at-'+temp);
+  if(!cb||!panel)return;
+  calcTotal();
+  if(!cb.checked){panel.classList.add('hidden');panel.innerHTML='';return;}
+  const nabl=document.getElementById('q-nabl').value;
+  const shownGroups=new Set();
+  let html='<div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:6px">Tests after '+temp+'°C ageing:</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">';
+  AGEING_TESTS.forEach(t=>{
+    if(t.groupId){
+      if(shownGroups.has(t.groupId))return;
+      shownGroups.add(t.groupId);
+      const g=AGEING_GROUPS[t.groupId];
+      const rate=nabl==='nabl'&&g.nabl?g.nabl:g.nonNabl;
+      html+=`<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;padding:2px 4px;grid-column:span 2">
+        <input type="checkbox" class="at-cb" data-temp="${temp}" data-name="${g.label}" data-rate="${rate}" style="accent-color:var(--amber);width:12px;height:12px" onchange="calcTotal()">
+        ${g.label} <span style="color:var(--text3);font-family:var(--mono)">₹${rate}</span>
+      </label>`;
+    } else {
+      const rate=nabl==='nabl'&&t.nabl?t.nabl:t.nonNabl;
+      html+=`<label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);cursor:pointer;padding:2px 4px">
+        <input type="checkbox" class="at-cb" data-temp="${temp}" data-name="${t.name}" data-rate="${rate}" style="accent-color:var(--amber);width:12px;height:12px" onchange="calcTotal()">
+        ${t.name} <span style="color:var(--text3);font-family:var(--mono)">₹${rate}</span>
+      </label>`;
+    }
+  });
+  html+='</div>';
+  panel.innerHTML=html;
+  panel.classList.remove('hidden');
+}
+
+function getAgeingTestsForTemp(temp){
+  const panel=document.getElementById('at-'+temp);
+  if(!panel)return[];
+  return [...panel.querySelectorAll('.at-cb:checked')].map(cb=>({name:cb.dataset.name,rate:parseInt(cb.dataset.rate)}));
 }
 
 function removeLine(i){
@@ -749,7 +863,7 @@ function calcTotal(){
   // tests subtotal
   const testsSub=quoteLines.reduce((a,l)=>a+l.rate*l.qty,0);
   // conditioning
-  const condDefs=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
+  const condDefs=[{id:'100',rate:660},{id:'70',rate:550},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
   let condTotal=0;
   condDefs.forEach(c=>{
     const cb=document.getElementById('c-'+c.id);
@@ -759,6 +873,12 @@ function calcTotal(){
     const lbl=document.getElementById('cl-'+c.id);
     if(lbl)lbl.textContent=amt>0?'₹'+amt.toLocaleString('en-IN'):'';
   });
+  // ageing sub-tests
+  let ageingTestTotal=0;
+  ['100','70','125','150','300'].forEach(temp=>{
+    getAgeingTestsForTemp(temp).forEach(t=>{ageingTestTotal+=t.rate;});
+  });
+  condTotal+=ageingTestTotal;
   // ozone
   const ozoneTotal=calcOzone(nabl);
   if(!document.getElementById('oz-enable')?.checked){
@@ -788,7 +908,7 @@ function addQuote(){
   if(!quoteLines.length){alert('Select at least one test.');return;}
   const nabl=document.getElementById('q-nabl').value;
   const testsSub=quoteLines.reduce((a,l)=>a+l.rate*l.qty,0);
-  const condDefs=[{id:'100',rate:660},{id:'125',rate:770},{id:'150',rate:880},{id:'300',rate:1200}];
+  const condDefs=[{id:'100',label:'Hot Air Ageing 100°C',rate:660},{id:'70',label:'Hot Air Ageing 70°C',rate:550},{id:'125',label:'Hot Air Ageing 125°C',rate:770},{id:'150',label:'Hot Air Ageing 150°C',rate:880},{id:'300',label:'Hot Air Ageing 300°C',rate:1200}];
   let condTotal=0;
   condDefs.forEach(c=>{const cb=document.getElementById('c-'+c.id);const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;if(cb&&cb.checked)condTotal+=c.rate*days;});
   const mould=parseInt(document.getElementById('q-mould').value)||0;
@@ -798,7 +918,7 @@ function addQuote(){
   const total=Math.round((testsSub+condTotal+ozoneTotal+mould)*(1-disc/100)*(1+gstPct/100));
   const testNames=quoteLines.map(l=>l.name+(l.qty>1?' ×'+l.qty:''));
   // snapshot conditioning for print
-  const condDefs2=[{id:'100',label:'Hot Air Ageing 100°C',rate:660},{id:'125',label:'Hot Air Ageing 125°C',rate:770},{id:'150',label:'Hot Air Ageing 150°C',rate:880},{id:'300',label:'Hot Air Ageing 300°C',rate:1200}];
+  const condDefs2=[{id:'100',label:'Hot Air Ageing 100°C',rate:660},{id:'70',label:'Hot Air Ageing 70°C',rate:550},{id:'125',label:'Hot Air Ageing 125°C',rate:770},{id:'150',label:'Hot Air Ageing 150°C',rate:880},{id:'300',label:'Hot Air Ageing 300°C',rate:1200}];
   const condLines=[];
   condDefs2.forEach(c=>{const cb=document.getElementById('c-'+c.id);const days=parseInt(document.getElementById('cd-'+c.id)?.value)||1;if(cb&&cb.checked)condLines.push({label:c.label,days,rate:c.rate,amount:c.rate*days});});
   // snapshot ozone for print
@@ -813,8 +933,91 @@ function addQuote(){
     const firstSample=base+extraHrs*hrRate;
     ozoneLine={pphm,extraHrs,numSamples,base,hrRate,firstSample,amount:ozoneTotal};
   }
-  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:testNames,lines:JSON.parse(JSON.stringify(quoteLines)),condLines,ozoneLine,mouldAmt:mould,disc,gstPct,nabl,amount:total,status:'Sent',date:new Date().toLocaleDateString('en-IN')});
+    const qStatus=document.getElementById('q-status')?.value||'Draft';
+  // snapshot ageing sub-tests
+  const ageingSubTests={};
+  ['100','70','125','150','300'].forEach(temp=>{
+    const tests=getAgeingTestsForTemp(temp);
+    if(tests.length)ageingSubTests[temp]=tests;
+  });
+  quotes.unshift({id:genId('QT',quotes),client,email:document.getElementById('q-email').value,ref:document.getElementById('q-ref').value,tests:testNames,lines:JSON.parse(JSON.stringify(quoteLines)),condLines,ozoneLine,ageingSubTests,mouldAmt:mould,disc,gstPct,nabl,amount:total,status:qStatus,date:new Date().toLocaleDateString('en-IN')});
+  // if editing, replace existing quote
+  const editId=document.getElementById('modal-quote').dataset.editId;
+  if(editId){
+    const idx=quotes.findIndex(x=>x.id===editId);
+    if(idx>-1){
+      quotes[idx]={...quotes[idx],...quotes[0]};
+      quotes[idx].id=editId;// keep original ID
+      quotes.shift();// remove the newly unshifted one
+    }
+    document.getElementById('modal-quote').dataset.editId='';
+    document.getElementById('modal-quote').querySelector('.modal-title').textContent='Generate quotation';
+    document.getElementById('modal-quote').querySelector('.modal-footer .btn-primary').textContent='Save quotation';
+  }
   save();closeModal('quote');renderQuotes();
+}
+
+let printTargetId=null;
+
+function openPrintDialog(id){
+  printTargetId=id;
+  document.getElementById('modal-printdialog').classList.remove('hidden');
+}
+
+function doPrint(mode){
+  closeModal('printdialog');
+  printQuote(printTargetId,mode);
+}
+
+function editQuote(id){
+  const q=quotes.find(x=>x.id===id);if(!q)return;
+  // open modal pre-filled
+  updateClientDatalist();
+  quoteLines=JSON.parse(JSON.stringify(q.lines||[]));
+  buildQuoteSelector();
+  // re-check selected tests
+  document.querySelectorAll('#q-test-selector .q-test-cb').forEach(cb=>{
+    const key=cb.dataset.type==='group'?'g:'+cb.dataset.groupid:'s:'+cb.dataset.sr;
+    if(quoteLines.find(l=>l.key===key))cb.checked=true;
+  });
+  renderQuoteLines();
+  document.getElementById('q-client').value=q.client||'';
+  document.getElementById('q-email').value=q.email||'';
+  document.getElementById('q-ref').value=q.ref||'';
+  document.getElementById('q-nabl').value=q.nabl||'non-nabl';
+  document.getElementById('q-status').value=q.status||'Draft';
+  document.getElementById('q-disc').value=q.disc||0;
+  document.getElementById('q-gst').value=q.gstPct||18;
+  document.getElementById('q-mould').value=q.mouldAmt||0;
+  // restore conditioning
+  const condDefs=[{id:'100'},{id:'70'},{id:'125'},{id:'150'},{id:'300'}];
+  condDefs.forEach(c=>{
+    const cb=document.getElementById('c-'+c.id);
+    const inp=document.getElementById('cd-'+c.id);
+    if(cb)cb.checked=false;if(inp)inp.value=1;
+  });
+  if(q.condLines){q.condLines.forEach(c=>{
+    const tempMatch=c.label.match(/(\d+)°C/);
+    if(tempMatch){const t=tempMatch[1];const cb=document.getElementById('c-'+t);const inp=document.getElementById('cd-'+t);
+      if(cb){cb.checked=true;toggleAgeingTests(t);}
+      if(inp)inp.value=c.days;
+    }
+  });}
+  // restore ozone
+  const ozEn=document.getElementById('oz-enable');
+  if(ozEn)ozEn.checked=false;
+  if(q.ozoneLine){
+    if(ozEn)ozEn.checked=true;
+    document.getElementById('oz-pphm').value=q.ozoneLine.pphm;
+    document.getElementById('oz-samples').value=q.ozoneLine.numSamples;
+    document.getElementById('oz-extrahrs').value=q.ozoneLine.extraHrs;
+  }
+  // mark as editing
+  document.getElementById('modal-quote').dataset.editId=id;
+  document.getElementById('modal-quote').querySelector('.modal-title').textContent='Edit quotation — '+id;
+  document.getElementById('modal-quote').querySelector('.modal-footer .btn-primary').textContent='Update quotation';
+  calcTotal();
+  document.getElementById('modal-quote').classList.remove('hidden');
 }
 
 function renderQuotes(){
@@ -828,72 +1031,93 @@ function renderQuotes(){
     <td style="font-family:var(--mono);color:var(--teal)">₹${q.amount.toLocaleString('en-IN')}</td>
     <td><span class="badge badge-blue">${q.status}</span></td>
     <td>${q.date}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="printQuote('${q.id}')">Print</button></td>
+    <td style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm" onclick="editQuote('${q.id}')">Edit</button><button class="btn btn-ghost btn-sm" onclick="openPrintDialog('${q.id}')">Print</button></td>
   </tr>`).join('');
 }
 
-function printQuote(id){
+function printQuote(id, mode){
+  if(!mode)mode='detailed';
   const q=quotes.find(x=>x.id===id);if(!q)return;
   const w=window.open('','_blank');
+  const isDetailed=(mode==='detailed');
   let srNo=0, rows='';
 
   // 1. Regular test lines
   (q.lines||[]).forEach(l=>{
     srNo++;
-    rows+=`<tr>
-      <td style="text-align:center">${srNo}</td>
-      <td>${l.name}${l.type==='group'?' <span class="grp">GROUP</span>':''}</td>
-      <td style="text-align:center">${l.qty}</td>
-      <td style="text-align:right">&#8377;${l.rate.toLocaleString('en-IN')}</td>
-      <td style="text-align:right">&#8377;${(l.rate*l.qty).toLocaleString('en-IN')}</td>
-    </tr>`;
+    if(isDetailed){
+      rows+=`<tr>
+        <td style="text-align:center">${srNo}</td>
+        <td>${l.name}${l.type==='group'?' <span class="grp">GROUP</span>':l.type==='custom'?' <span class="grp" style="color:#2266aa;border-color:#2266aa">CUSTOM</span>':''}</td>
+        <td style="text-align:center">${l.qty}</td>
+        <td style="text-align:right">&#8377;${l.rate.toLocaleString('en-IN')}</td>
+        <td style="text-align:right">&#8377;${(l.rate*l.qty).toLocaleString('en-IN')}</td>
+      </tr>`;
+    } else {
+      rows+=`<tr><td style="text-align:center">${srNo}</td><td colspan="2">${l.name}${l.qty>1?' &times;'+l.qty:''}</td></tr>`;
+    }
   });
 
-  // 2. Conditioning / ageing lines
+  // 2. Conditioning lines + ageing sub-tests
   if(q.condLines&&q.condLines.length){
     q.condLines.forEach(c=>{
       srNo++;
-      rows+=`<tr style="background:#fffbf0">
-        <td style="text-align:center">${srNo}</td>
-        <td><strong>${c.label}</strong> &mdash; ${c.days} day${c.days>1?'s':''}</td>
-        <td style="text-align:center">&mdash;</td>
-        <td style="text-align:right">&#8377;${c.rate.toLocaleString('en-IN')}/day</td>
-        <td style="text-align:right">&#8377;${c.amount.toLocaleString('en-IN')}</td>
-      </tr>`;
+      const tempMatch=(c.label||'').match(/(\d+)/);
+      const temp=tempMatch?tempMatch[1]:null;
+      const subTests=q.ageingSubTests&&temp&&q.ageingSubTests[temp]?q.ageingSubTests[temp]:[];
+      if(isDetailed){
+        rows+=`<tr style="background:#fffbf0">
+          <td style="text-align:center">${srNo}</td>
+          <td><strong>${c.label}</strong> &mdash; ${c.days} day${c.days>1?'s':''}</td>
+          <td style="text-align:center">&mdash;</td>
+          <td style="text-align:right">&#8377;${c.rate.toLocaleString('en-IN')}/day</td>
+          <td style="text-align:right">&#8377;${c.amount.toLocaleString('en-IN')}</td>
+        </tr>`;
+        const letters=['a','b','c','d','e','f','g','h'];
+        subTests.forEach((t,ti)=>{
+          rows+=`<tr style="background:#fffbf0">
+            <td style="text-align:center;color:#888;font-size:12px">${letters[ti]||ti+1}</td>
+            <td style="padding-left:24px;font-size:12px;color:#555">Change in ${t.name} (after ageing)</td>
+            <td style="text-align:center">&mdash;</td>
+            <td style="text-align:right;font-size:12px">&#8377;${t.rate.toLocaleString('en-IN')}</td>
+            <td style="text-align:right;font-size:12px">&#8377;${t.rate.toLocaleString('en-IN')}</td>
+          </tr>`;
+        });
+      } else {
+        rows+=`<tr style="background:#fffbf0"><td style="text-align:center">${srNo}</td><td colspan="2"><strong>${c.label}</strong> &mdash; ${c.days} day${c.days>1?'s':''}</td></tr>`;
+        const letters=['a','b','c','d','e','f','g','h'];
+        subTests.forEach((t,ti)=>{
+          rows+=`<tr style="background:#fffbf0"><td style="text-align:center;color:#888;font-size:12px">${letters[ti]||ti+1}</td><td colspan="2" style="padding-left:24px;font-size:12px;color:#555">Change in ${t.name} (after ageing)</td></tr>`;
+        });
+      }
     });
   }
 
-  // 3. Ozone optional section line
+  // 3. Ozone
   if(q.ozoneLine){
-    const oz=q.ozoneLine;
-    srNo++;
+    const oz=q.ozoneLine; srNo++;
     let ozDesc=`Ozone Resistance @ ${oz.pphm} PPHM / 48 hrs`;
     if(oz.extraHrs>0) ozDesc+=` + ${oz.extraHrs} extra hr${oz.extraHrs>1?'s':''}`;
-    if(oz.numSamples>1) ozDesc+=` &mdash; ${oz.numSamples} samples (2nd onwards @ 60%)`;
-    let ozRate=`&#8377;${oz.base.toLocaleString('en-IN')} base`;
-    if(oz.extraHrs>0) ozRate+=` + &#8377;${oz.hrRate}/hr`;
-    rows+=`<tr style="background:#fff5f5">
-      <td style="text-align:center">${srNo}</td>
-      <td><strong>${ozDesc}</strong></td>
-      <td style="text-align:center">${oz.numSamples}</td>
-      <td style="text-align:right">${ozRate}</td>
-      <td style="text-align:right">&#8377;${oz.amount.toLocaleString('en-IN')}</td>
-    </tr>`;
+    if(oz.numSamples>1) ozDesc+=` (${oz.numSamples} samples, 2nd @ 60%)`;
+    if(isDetailed){
+      let ozRate=`&#8377;${oz.base.toLocaleString('en-IN')} base`;
+      if(oz.extraHrs>0)ozRate+=` + &#8377;${oz.hrRate}/hr`;
+      rows+=`<tr style="background:#fff5f5"><td style="text-align:center">${srNo}</td><td><strong>${ozDesc}</strong></td><td style="text-align:center">${oz.numSamples}</td><td style="text-align:right">${ozRate}</td><td style="text-align:right">&#8377;${oz.amount.toLocaleString('en-IN')}</td></tr>`;
+    } else {
+      rows+=`<tr style="background:#fff5f5"><td style="text-align:center">${srNo}</td><td colspan="2"><strong>${ozDesc}</strong></td></tr>`;
+    }
   }
 
   // 4. Moulding
   if(q.mouldAmt>0){
     srNo++;
-    rows+=`<tr>
-      <td style="text-align:center">${srNo}</td>
-      <td>Moulding of Test Specimens</td>
-      <td style="text-align:center">&mdash;</td>
-      <td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td>
-      <td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td>
-    </tr>`;
+    if(isDetailed){
+      rows+=`<tr><td style="text-align:center">${srNo}</td><td>Moulding of Test Specimens</td><td style="text-align:center">&mdash;</td><td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td><td style="text-align:right">&#8377;${q.mouldAmt.toLocaleString('en-IN')}</td></tr>`;
+    } else {
+      rows+=`<tr><td style="text-align:center">${srNo}</td><td colspan="2">Moulding of Test Specimens</td></tr>`;
+    }
   }
 
-  // Totals — recalculate cleanly from saved values
   const disc=q.disc||0;
   const gstPct=q.gstPct||18;
   const rawSub=Math.round(q.amount/((1-disc/100)*(1+gstPct/100)));
@@ -901,10 +1125,27 @@ function printQuote(id){
   const afterDisc=rawSub-discAmt;
   const gstAmt=Math.round(afterDisc*gstPct/100);
 
-  w.document.write(`<html><head><title>Quotation ${q.id}</title><style>
+  const tableHeader=isDetailed
+    ?`<tr><th style="width:48px;text-align:center">Sr. No</th><th>Test Description</th><th style="text-align:center;width:50px">Qty</th><th style="text-align:right;width:120px">Rate (&#8377;)</th><th style="text-align:right;width:110px">Amount (&#8377;)</th></tr>`
+    :`<tr><th style="width:48px;text-align:center">Sr. No</th><th colspan="2">Test Description</th></tr>`;
+
+  const totalsHtml=isDetailed
+    ?`<div class="tot-wrap"><table class="tot-table">
+        ${disc>0?`<tr><td style="color:#555">Subtotal</td><td style="text-align:right">&#8377;${rawSub.toLocaleString('en-IN')}</td></tr><tr><td style="color:#c00">Discount (${disc}%)</td><td style="text-align:right;color:#c00">&minus; &#8377;${discAmt.toLocaleString('en-IN')}</td></tr>`:''}
+        <tr><td style="color:#555">GST (${gstPct}%)</td><td style="text-align:right">&#8377;${gstAmt.toLocaleString('en-IN')}</td></tr>
+        <tr><td class="grand">Total Payable</td><td class="grand" style="text-align:right">&#8377;${q.amount.toLocaleString('en-IN')}</td></tr>
+      </table></div>`
+    :`<div class="tot-wrap"><table class="tot-table">
+        ${disc>0?`<tr><td style="color:#555">Amount before discount</td><td style="text-align:right">&#8377;${rawSub.toLocaleString('en-IN')}</td></tr><tr><td style="color:#c00">Discount (${disc}%)</td><td style="text-align:right;color:#c00">&minus; &#8377;${discAmt.toLocaleString('en-IN')}</td></tr>`:''}
+        <tr><td style="color:#555">GST (${gstPct}%)</td><td style="text-align:right">&#8377;${gstAmt.toLocaleString('en-IN')}</td></tr>
+        <tr><td class="grand">Total Payable</td><td class="grand" style="text-align:right">&#8377;${q.amount.toLocaleString('en-IN')}</td></tr>
+      </table></div>`;
+
+  w.document.write(`<html><head><title>Quotation ${q.id}${isDetailed?' [Internal]':''}</title><style>
     *{box-sizing:border-box}
     body{font-family:Arial,sans-serif;padding:40px;max-width:720px;margin:auto;color:#222;font-size:13px}
-    h2{color:#0a6e5c;margin-bottom:4px}
+    h2{color:#0a6e5c;margin-bottom:2px}
+    .mode-tag{font-size:11px;padding:2px 8px;border-radius:10px;margin-left:8px;font-weight:normal;${isDetailed?'background:#fff3cd;color:#856404':'background:#d1f2eb;color:#0a6e5c'}}
     .meta{font-size:13px;color:#444;line-height:1.9;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px;border-left:4px solid #0a6e5c}
     table{width:100%;border-collapse:collapse;margin:12px 0}
     th,td{border:1px solid #ccc;padding:8px 10px}
@@ -913,37 +1154,22 @@ function printQuote(id){
     .tot-wrap{display:flex;justify-content:flex-end;margin-top:8px}
     .tot-table{border-collapse:collapse;min-width:300px}
     .tot-table td{padding:5px 12px;font-size:13px;border:none}
-    .tot-table .grand{font-size:16px;font-weight:bold;color:#0a6e5c;border-top:2px solid #0a6e5c;padding-top:8px}
+    .grand{font-size:16px;font-weight:bold;color:#0a6e5c;border-top:2px solid #0a6e5c;padding-top:8px}
     .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#e6f9f5;color:#0a6e5c;font-weight:600;border:1px solid #b2e8d8}
     .footer{margin-top:24px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:10px}
+    @media print{.mode-tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
   </style></head><body>
-    <h2>Quotation</h2>
+    <h2>Quotation <span class="mode-tag">${isDetailed?'Internal / Detailed':'For Client'}</span></h2>
     <div class="meta">
       <strong>Quote No:</strong> ${q.id} &nbsp;&nbsp; <strong>Date:</strong> ${q.date}<br>
-      <strong>Client:</strong> ${q.client}${q.email?' &nbsp;|&nbsp; <strong>Email:</strong> '+q.email:''}<br>
+      <strong>Client:</strong> ${q.client}${q.email?' &nbsp;|&nbsp; '+q.email:''}<br>
       <strong>Testing type:</strong> <span class="badge">${q.nabl==='nabl'?'NABL Accredited':'Non-NABL'}</span>${q.ref?' &nbsp;&nbsp; <strong>Ref/PO:</strong> '+q.ref:''}
     </div>
-    <table>
-      <tr>
-        <th style="width:48px;text-align:center">Sr. No</th>
-        <th>Test Description</th>
-        <th style="text-align:center;width:50px">Qty</th>
-        <th style="text-align:right;width:130px">Rate (&#8377;)</th>
-        <th style="text-align:right;width:120px">Amount (&#8377;)</th>
-      </tr>
-      ${rows}
-    </table>
-    <div class="tot-wrap">
-      <table class="tot-table">
-        ${disc>0?`<tr><td style="color:#555">Subtotal</td><td style="text-align:right">&#8377;${rawSub.toLocaleString('en-IN')}</td></tr>
-        <tr><td style="color:#c00">Discount (${disc}%)</td><td style="text-align:right;color:#c00">&minus; &#8377;${discAmt.toLocaleString('en-IN')}</td></tr>`:''}
-        <tr><td style="color:#555">GST (${gstPct}%)</td><td style="text-align:right">&#8377;${gstAmt.toLocaleString('en-IN')}</td></tr>
-        <tr><td class="grand">Total Payable</td><td class="grand" style="text-align:right">&#8377;${q.amount.toLocaleString('en-IN')}</td></tr>
-      </table>
-    </div>
+    <table>${tableHeader}${rows}</table>
+    ${totalsHtml}
     <div class="footer">
-      This is a system-generated quotation. Valid for 30 days from date of issue.<br>
-      All charges are subject to applicable GST as stated above.
+      ${isDetailed?'<strong>INTERNAL USE ONLY</strong> &mdash; Do not share with client.<br>':''}
+      System-generated quotation. Valid for 30 days from date of issue. All charges subject to GST as above.
     </div>
   </body></html>`);
   w.document.close();w.print();
