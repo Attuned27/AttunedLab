@@ -144,6 +144,51 @@ textarea{resize:vertical;min-height:60px}
 .info-box{font-size:11px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:7px 10px;margin-bottom:12px;line-height:1.6}
 .hidden{display:none!important}
 </style>
+<!-- IMPORT CLIENTS MODAL -->
+<div class="modal-overlay hidden" id="modal-importclients">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <div class="modal-title">Import clients from Excel</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('importclients')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box" style="margin-bottom:16px">
+        Upload an Excel file (.xlsx or .xls). Columns detected automatically — works best with headers: <strong>Company, Contact, Email, Phone, City, GSTIN</strong>. Any order is fine.
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Select Excel file</label>
+        <input type="file" id="import-file" accept=".xlsx,.xls,.csv" onchange="handleImportFile(this)"
+          style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--text);font-size:13px;width:100%">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <span id="import-count" style="font-size:12px;color:var(--teal);font-family:var(--mono)"></span>
+        <span id="import-status" style="font-size:12px;color:var(--amber)"></span>
+      </div>
+      <div id="import-preview-section" class="hidden">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:6px">Preview — uncheck any rows to skip:</div>
+        <div style="max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:8px">
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="width:32px;padding:8px;background:var(--bg3);border-bottom:1px solid var(--border)"></th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Company</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Contact</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Email</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Phone</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">City</th>
+            </tr></thead>
+            <tbody id="import-preview-body"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:8px">
+          <button class="btn btn-ghost" onclick="closeModal('importclients')">Cancel</button>
+          <button class="btn btn-primary" onclick="confirmImport()">Import selected clients</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -188,7 +233,7 @@ textarea{resize:vertical;min-height:60px}
     </div>
     <div id="page-samples" class="hidden">
       <div class="topbar"><div><div class="page-title">Samples</div><div class="page-sub">Register and track test samples</div></div><div class="topbar-actions"><div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="sample-search" oninput="renderSamples()" placeholder="Search..."></div><button class="btn btn-primary" onclick="openModal('sample')">+ New sample</button></div></div>
-      <div class="content"><div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Client</th><th>Material</th><th>Tests</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="samples-table"></tbody></table></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Sample ID</th><th>Quote</th><th>Client</th><th>Material</th><th>Tests</th><th>Type</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="samples-table"></tbody></table></div></div>
     </div>
     <div id="page-quotations" class="hidden">
       <div class="topbar"><div><div class="page-title">Quotations</div><div class="page-sub">Generate client quotations with live pricing</div></div><div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('quote')">+ New quote</button></div></div>
@@ -199,7 +244,7 @@ textarea{resize:vertical;min-height:60px}
       <div class="content"><div class="table-wrap"><table><thead><tr><th>Report ID</th><th>Sample ID</th><th>Client</th><th>Material</th><th>Result</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="reports-table"></tbody></table></div></div>
     </div>
     <div id="page-clients" class="hidden">
-      <div class="topbar"><div><div class="page-title">Clients</div><div class="page-sub">Manage client database</div></div><div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('client')">+ Add client</button></div></div>
+      <div class="topbar"><div><div class="page-title">Clients</div><div class="page-sub">Manage client database</div></div><div class="topbar-actions"><button class="btn btn-ghost" onclick="openModal('importclients')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import from Excel</button><button class="btn btn-primary" onclick="openModal('client')">+ Add client</button></div></div>
       <div class="content"><div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>City</th><th>GSTIN</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div></div>
     </div>
     <div id="page-pricelist" class="hidden">
@@ -214,6 +259,17 @@ textarea{resize:vertical;min-height:60px}
   <div class="modal" style="max-width:660px">
     <div class="modal-header"><div class="modal-title">Register new sample</div><button class="btn btn-ghost btn-sm" onclick="closeModal('sample')">✕</button></div>
     <div class="modal-body">
+      <div class="form-row full" style="margin-bottom:8px">
+        <div class="form-group">
+          <label>Link to quotation <span style="color:var(--text3);font-weight:400">(optional — auto-fills tests &amp; client)</span></label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="s-quote-link" onchange="onQuoteLink()" style="flex:1">
+              <option value="">— Enter manually —</option>
+            </select>
+            <span id="s-link-badge" style="font-size:11px;color:var(--teal);font-family:var(--mono);white-space:nowrap"></span>
+          </div>
+        </div>
+      </div>
       <div class="form-row"><div class="form-group"><label>Client name *</label><input id="s-client" placeholder="Company name" list="client-names"><datalist id="client-names"></datalist></div><div class="form-group"><label>Contact / email</label><input id="s-email" placeholder="email@company.com"></div></div>
       <div class="form-row"><div class="form-group"><label>Material type *</label><select id="s-material"><option value="">Select material</option><option>Natural Rubber (NR)</option><option>SBR</option><option>EPDM</option><option>NBR</option><option>CR (Neoprene)</option><option>Silicone</option><option>HNBR</option><option>CPE</option><option>Hypalon</option><option>Plastic</option><option>Latex</option><option>Adhesive</option><option>Other</option></select></div><div class="form-group"><label>Sample quantity / description</label><input id="s-qty" placeholder="e.g. 3 pieces, 500g"></div></div>
       <div class="form-row"><div class="form-group"><label>Testing type</label><select id="s-nabl"><option value="non-nabl">Non-NABL</option><option value="nabl">NABL</option></select></div><div class="form-group"><label>Priority</label><select id="s-priority"><option>Normal</option><option>Urgent</option><option>Express</option></select></div></div>
@@ -580,8 +636,18 @@ function showPage(p){
 // ── MODALS ─────────────────────────────────────────────────────────────
 function openModal(m){
   updateClientDatalist();
-  if(m==='sample')buildSampleTestList();
+  if(m==='sample'){
+    buildSampleTestList();
+    // populate quote link dropdown
+    const sel=document.getElementById('s-quote-link');
+    if(sel){
+      sel.innerHTML='<option value="">— Enter manually —</option>'+
+        quotes.map(q=>`<option value="${q.id}">${q.id} — ${q.client} (${q.nabl==='nabl'?'NABL':'Non-NABL'})</option>`).join('');
+    }
+    document.getElementById('s-link-badge').textContent='';
+  }
   if(m==='quote'){quoteLines=[];buildQuoteSelector();renderQuoteLines();calcTotal();}
+  if(m==='importclients'){openImportModal();return;}
   if(m==='report'){
     const sel=document.getElementById('r-sample');
     sel.innerHTML='<option value="">Select sample</option>'+samples.map(s=>`<option value="${s.id}">${s.id} — ${s.client} (${s.material})</option>`).join('');
@@ -756,6 +822,116 @@ function addCustomLine(){
   renderQuoteLines();
   document.getElementById('q-lines-section').classList.remove('hidden');
   calcTotal();
+}
+
+// ── QUOTE → SAMPLE LINK ──────────────────────────────────────────────
+function onQuoteLink(){
+  const qId=document.getElementById('s-quote-link').value;
+  const badge=document.getElementById('s-link-badge');
+  if(!qId){badge.textContent='';return;}
+  const q=quotes.find(x=>x.id===qId);
+  if(!q){badge.textContent='';return;}
+
+  // auto-fill client & email
+  document.getElementById('s-client').value=q.client||'';
+  document.getElementById('s-email').value=q.email||'';
+  document.getElementById('s-nabl').value=q.nabl||'non-nabl';
+
+  // build list of test names from quote lines
+  const testNames=new Set();
+  (q.lines||[]).forEach(l=>{
+    if(l.type==='group'){
+      // expand group to individual test names
+      PRICE_DATA.filter(p=>p.groupId===l.key.replace('g:','')).forEach(p=>testNames.add(p.name));
+      // also add by groupId
+      PRICE_DATA.filter(p=>p.groupId&&l.name&&l.name.includes(p.name.substring(0,8))).forEach(p=>testNames.add(p.name));
+    } else {
+      testNames.add(l.name);
+    }
+  });
+  // also add ageing sub-tests
+  if(q.ageingSubTests){Object.values(q.ageingSubTests).flat().forEach(t=>testNames.add(t.name));}
+
+  // tick matching checkboxes in the sample test list
+  document.querySelectorAll('#s-test-list .s-test-cb').forEach(cb=>{
+    cb.checked=testNames.has(cb.value);
+  });
+
+  badge.textContent=`✓ ${testNames.size} tests loaded from ${qId}`;
+}
+
+// ── EXCEL IMPORT ──────────────────────────────────────────────────────
+function openImportModal(){
+  document.getElementById('import-preview-body').innerHTML='';
+  document.getElementById('import-status').textContent='';
+  document.getElementById('import-file').value='';
+  document.getElementById('import-preview-section').classList.add('hidden');
+  document.getElementById('modal-importclients').classList.remove('hidden');
+}
+
+function handleImportFile(input){
+  const file=input.files[0];
+  if(!file){return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      // parse xlsx using SheetJS loaded from CDN
+      const data=new Uint8Array(e.target.result);
+      const wb=XLSX.read(data,{type:'array'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+      if(!rows.length){document.getElementById('import-status').textContent='No data found in file.';return;}
+      // auto-detect columns (case-insensitive)
+      const colMap={};
+      const firstRow=rows[0];
+      Object.keys(firstRow).forEach(k=>{
+        const kl=k.toLowerCase().replace(/[\s_-]/g,'');
+        if(kl.includes('company')||kl.includes('name')||kl==='client')colMap.company=k;
+        else if(kl.includes('contact')||kl.includes('person'))colMap.contact=k;
+        else if(kl.includes('email')||kl.includes('mail'))colMap.email=k;
+        else if(kl.includes('phone')||kl.includes('mobile')||kl.includes('tel'))colMap.phone=k;
+        else if(kl.includes('city')||kl.includes('location'))colMap.city=k;
+        else if(kl.includes('gst')||kl.includes('gstin'))colMap.gst=k;
+      });
+      // preview
+      const tbody=document.getElementById('import-preview-body');
+      importPreviewData=rows.map(r=>({
+        company:(r[colMap.company]||'').toString().trim(),
+        contact:(r[colMap.contact]||'').toString().trim(),
+        email:(r[colMap.email]||'').toString().trim(),
+        phone:(r[colMap.phone]||'').toString().trim(),
+        city:(r[colMap.city]||'').toString().trim(),
+        gst:(r[colMap.gst]||'').toString().trim(),
+      })).filter(r=>r.company);
+      tbody.innerHTML=importPreviewData.map((r,i)=>`<tr>
+        <td><input type="checkbox" id="imp-${i}" checked style="accent-color:var(--teal)"></td>
+        <td class="strong">${r.company}</td><td>${r.contact}</td><td>${r.email}</td><td>${r.phone}</td><td>${r.city}</td>
+      </tr>`).join('');
+      document.getElementById('import-count').textContent=importPreviewData.length+' records found';
+      document.getElementById('import-preview-section').classList.remove('hidden');
+      document.getElementById('import-status').textContent='';
+    }catch(err){
+      document.getElementById('import-status').textContent='Error reading file: '+err.message;
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+let importPreviewData=[];
+
+function confirmImport(){
+  let added=0,skipped=0;
+  importPreviewData.forEach((r,i)=>{
+    const cb=document.getElementById('imp-'+i);
+    if(!cb||!cb.checked)return;
+    // skip if company already exists
+    if(clients.find(c=>c.company.toLowerCase()===r.company.toLowerCase())){skipped++;return;}
+    clients.push(r);added++;
+  });
+  save();
+  document.getElementById('import-status').textContent=`✓ ${added} clients imported. ${skipped>0?skipped+' skipped (already exist).':''}`;
+  document.getElementById('import-preview-section').classList.add('hidden');
+  renderClients();
 }
 
 // ── AGEING SUB-TESTS ──────────────────────────────────────────────────
@@ -1182,10 +1358,13 @@ function addSample(){
   if(!client||!material){alert('Client name and material type are required.');return;}
   const tests=[...document.querySelectorAll('#s-test-list .s-test-cb:checked')].map(x=>x.value);
   if(!tests.length){alert('Select at least one test.');return;}
-  samples.unshift({id:genId('SMP',samples),client,email:document.getElementById('s-email').value,material,qty:document.getElementById('s-qty').value,tests,nabl:document.getElementById('s-nabl').value,priority:document.getElementById('s-priority').value,days:document.getElementById('s-days').value,std:document.getElementById('s-std').value,remarks:document.getElementById('s-remarks').value,status:'Received',date:new Date().toLocaleDateString('en-IN')});
+  const linkedQuote=document.getElementById('s-quote-link')?.value||'';
+  samples.unshift({id:genId('SMP',samples),client,email:document.getElementById('s-email').value,material,qty:document.getElementById('s-qty').value,tests,nabl:document.getElementById('s-nabl').value,priority:document.getElementById('s-priority').value,days:document.getElementById('s-days').value,std:document.getElementById('s-std').value,remarks:document.getElementById('s-remarks').value,linkedQuote,status:'Received',date:new Date().toLocaleDateString('en-IN')});
   save();closeModal('sample');
   ['s-client','s-email','s-qty','s-remarks','s-std'].forEach(i=>document.getElementById(i).value='');
   document.getElementById('s-material').value='';document.getElementById('s-days').value='7';
+  const ql=document.getElementById('s-quote-link');if(ql)ql.value='';
+  const lb=document.getElementById('s-link-badge');if(lb)lb.textContent='';
   renderSamples();renderDash();
 }
 function renderSamples(){
@@ -1194,7 +1373,9 @@ function renderSamples(){
   const tb=document.getElementById('samples-table');
   if(!f.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text3)">No samples yet.</td></tr>`;return;}
   tb.innerHTML=f.map(s=>`<tr>
-    <td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td><td class="strong">${s.client}</td><td>${s.material}</td>
+    <td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td>
+    <td style="font-family:var(--mono);font-size:11px">${s.linkedQuote?`<span class="badge badge-teal" style="cursor:pointer" onclick="editQuote('${s.linkedQuote}')" title="Open quote">${s.linkedQuote}</span>`:'—'}</td>
+    <td class="strong">${s.client}</td><td>${s.material}</td>
     <td style="font-size:12px">${s.tests.slice(0,2).join(', ')}${s.tests.length>2?` +${s.tests.length-2} more`:''}</td>
     <td><span class="badge ${s.nabl==='nabl'?'badge-purple':'badge-gray'}">${s.nabl==='nabl'?'NABL':'Non-NABL'}</span></td>
     <td>${statusBadge(s.status)}</td><td>${s.date}</td>
