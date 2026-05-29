@@ -173,8 +173,8 @@ textarea{resize:vertical;min-height:60px}
               <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Company</th>
               <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Contact</th>
               <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Email</th>
-              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">Phone</th>
-              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">City</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">State</th>
+              <th style="padding:8px 12px;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);text-align:left">GSTIN</th>
             </tr></thead>
             <tbody id="import-preview-body"></tbody>
           </table>
@@ -245,7 +245,7 @@ textarea{resize:vertical;min-height:60px}
     </div>
     <div id="page-clients" class="hidden">
       <div class="topbar"><div><div class="page-title">Clients</div><div class="page-sub">Manage client database</div></div><div class="topbar-actions"><button class="btn btn-ghost" onclick="openModal('importclients')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import from Excel</button><button class="btn btn-primary" onclick="openModal('client')">+ Add client</button></div></div>
-      <div class="content"><div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>Phone</th><th>City</th><th>GSTIN</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>State</th><th>GSTIN</th><th>Address</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div></div>
     </div>
     <div id="page-pricelist" class="hidden">
       <div class="topbar"><div><div class="page-title">Price List</div><div class="page-sub">All testing charges — Non-NABL &amp; NABL rates</div></div><div class="topbar-actions"><div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="price-search" oninput="renderPriceList()" placeholder="Search test..."></div></div></div>
@@ -886,12 +886,15 @@ function handleImportFile(input){
       const firstRow=rows[0];
       Object.keys(firstRow).forEach(k=>{
         const kl=k.toLowerCase().replace(/[\s_-]/g,'');
-        if(kl.includes('company')||kl.includes('name')||kl==='client')colMap.company=k;
+        if(kl.includes('customername')||kl.includes('company')||kl.includes('clientname')||kl==='client'||kl==='name')colMap.company=k;
         else if(kl.includes('contact')||kl.includes('person'))colMap.contact=k;
-        else if(kl.includes('email')||kl.includes('mail'))colMap.email=k;
+        else if(kl.includes('email')||kl.includes('emailid')||kl.includes('mail'))colMap.email=k;
         else if(kl.includes('phone')||kl.includes('mobile')||kl.includes('tel'))colMap.phone=k;
         else if(kl.includes('city')||kl.includes('location'))colMap.city=k;
+        else if(kl==='state')colMap.state=k;
+        else if(kl.includes('address'))colMap.address=k;
         else if(kl.includes('gst')||kl.includes('gstin'))colMap.gst=k;
+        else if(kl.includes('country'))colMap.country=k;
       });
       // preview
       const tbody=document.getElementById('import-preview-body');
@@ -900,12 +903,15 @@ function handleImportFile(input){
         contact:(r[colMap.contact]||'').toString().trim(),
         email:(r[colMap.email]||'').toString().trim(),
         phone:(r[colMap.phone]||'').toString().trim(),
-        city:(r[colMap.city]||'').toString().trim(),
+        city:(r[colMap.city]||r[colMap.state]||'').toString().trim(),
+        state:(r[colMap.state]||'').toString().trim(),
+        address:(r[colMap.address]||'').toString().trim(),
         gst:(r[colMap.gst]||'').toString().trim(),
+        country:(r[colMap.country]||'').toString().trim(),
       })).filter(r=>r.company);
       tbody.innerHTML=importPreviewData.map((r,i)=>`<tr>
         <td><input type="checkbox" id="imp-${i}" checked style="accent-color:var(--teal)"></td>
-        <td class="strong">${r.company}</td><td>${r.contact}</td><td>${r.email}</td><td>${r.phone}</td><td>${r.city}</td>
+        <td class="strong">${r.company}</td><td>${r.contact||'—'}</td><td style="font-size:11px">${r.email||'—'}</td><td>${r.state||'—'}</td><td style="font-family:var(--mono);font-size:11px">${r.gst||'—'}</td>
       </tr>`).join('');
       document.getElementById('import-count').textContent=importPreviewData.length+' records found';
       document.getElementById('import-preview-section').classList.remove('hidden');
@@ -1462,7 +1468,19 @@ function addClient(){
 function renderClients(){
   const tb=document.getElementById('clients-table');
   if(!clients.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No clients yet.</td></tr>`;return;}
-  tb.innerHTML=clients.map(c=>{const cnt=samples.filter(s=>s.client===c.company).length;return`<tr><td class="strong">${c.company}</td><td>${c.contact||'—'}</td><td>${c.email||'—'}</td><td>${c.phone||'—'}</td><td>${c.city||'—'}</td><td style="font-family:var(--mono);font-size:12px">${c.gst||'—'}</td><td><span class="badge badge-teal">${cnt}</span></td></tr>`;}).join('');
+  tb.innerHTML=clients.map(c=>{
+    const cnt=samples.filter(s=>s.client===c.company).length;
+    const addr=(c.address||c.city||'—').substring(0,45)+(c.address&&c.address.length>45?'…':'');
+    return`<tr>
+      <td class="strong">${c.company}</td>
+      <td>${c.contact||'—'}</td>
+      <td style="font-size:12px">${c.email||'—'}</td>
+      <td>${c.state||c.city||'—'}</td>
+      <td style="font-family:var(--mono);font-size:11px">${c.gst||'—'}</td>
+      <td style="font-size:11px;color:var(--text3)" title="${(c.address||'').replace(/"/g,"'")}">${addr}</td>
+      <td><span class="badge badge-teal">${cnt}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 // ── PRICE LIST ─────────────────────────────────────────────────────────
