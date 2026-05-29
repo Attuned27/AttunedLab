@@ -144,6 +144,65 @@ textarea{resize:vertical;min-height:60px}
 .info-box{font-size:11px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:7px 10px;margin-bottom:12px;line-height:1.6}
 .hidden{display:none!important}
 </style>
+<!-- ADD TEST MODAL -->
+<div class="modal-overlay hidden" id="modal-addtest">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header"><div class="modal-title" id="addtest-title">Add new test</div><button class="btn btn-ghost btn-sm" onclick="closeModal('addtest')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label>SR No.</label><input id="at-sr" placeholder="e.g. 150"></div><div class="form-group"><label>Category *</label>
+        <select id="at-cat"><option value="">Select</option><option>Chemical</option><option>Physical</option><option>Rheology</option><option>Oil &amp; Swelling</option><option>Electrical</option><option>Low Temperature</option><option>Ozone</option><option>Miscellaneous</option></select>
+      </div></div>
+      <div class="form-row full"><div class="form-group"><label>Test name *</label><input id="at-name" placeholder="Full test name"></div></div>
+      <div class="form-row"><div class="form-group"><label>Non-NABL rate (₹) *</label><input id="at-nonnabl" type="number" min="0" placeholder="0"></div><div class="form-group"><label>NABL rate (₹) <span style="color:var(--text3);font-weight:400">optional</span></label><input id="at-nabl" type="number" min="0" placeholder="Leave blank if N/A"></div></div>
+      <div class="form-row full"><div class="form-group"><label>Remarks</label><input id="at-remark" placeholder="e.g. Per metal, 2nd sample at 60%"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('addtest')">Cancel</button><button class="btn btn-primary" id="addtest-btn" onclick="saveTest()">Add test</button></div>
+  </div>
+</div>
+
+<!-- PROFORMA INVOICE MODAL -->
+<div class="modal-overlay hidden" id="modal-pi">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header"><div class="modal-title" id="pi-modal-title">New Proforma Invoice</div><button class="btn btn-ghost btn-sm" onclick="closeModal('pi')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row full" style="margin-bottom:8px">
+        <div class="form-group">
+          <label>Link to quotation <span style="color:var(--text3);font-weight:400">(optional — auto-fills client &amp; tests)</span></label>
+          <select id="pi-quote-link" onchange="onPIQuoteLink()" style="width:100%">
+            <option value="">— Create standalone PI —</option>
+          </select>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="form-row"><div class="form-group"><label>Client name *</label><input id="pi-client" placeholder="Company name" list="pi-client-names"><datalist id="pi-client-names"></datalist></div><div class="form-group"><label>Letter ref / PO ref</label><input id="pi-ref" placeholder="e.g. Email Dt. 29.05.2026"></div></div>
+      <div class="form-row full" id="pi-client-details" style="background:var(--bg3);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text2);display:none">
+        <span id="pi-client-info">—</span>
+      </div>
+      <div class="divider"></div>
+      <div class="section-header"><span class="section-title">Services / Tests</span><button class="btn btn-ghost btn-sm" onclick="addPILine()" style="font-size:11px">+ Add line</button></div>
+      <div id="pi-lines-wrap">
+        <div class="quote-lines-header" style="grid-template-columns:1fr 100px 80px 80px 28px"><span>Description</span><span>Basic value</span><span>Samples</span><span style="text-align:right">Amount</span><span></span></div>
+        <div id="pi-lines"></div>
+      </div>
+      <div class="note-box" style="margin-top:8px">Tests listed below are for reference only and do not appear on the client copy with rates.</div>
+      <div class="form-row full" style="margin-top:10px"><div class="form-group"><label>Tests performed (for reference — listed on PI without rates)</label><textarea id="pi-tests" placeholder="e.g. Hardness (Shore A), Tensile Strength, Elongation at Break..." style="min-height:70px"></textarea></div></div>
+      <div class="divider"></div>
+      <div class="form-row three">
+        <div class="form-group"><label>GST type</label><select id="pi-gsttype" onchange="calcPITotal()"><option value="cgst_sgst">CGST + SGST (9%+9%)</option><option value="igst">IGST (18%)</option></select></div>
+        <div class="form-group"><label>Discount (%)</label><input id="pi-disc" type="number" value="0" min="0" max="100" oninput="calcPITotal()"></div>
+        <div class="form-group"><label>Status</label><select id="pi-status"><option>Draft</option><option>Issued</option><option>Paid</option><option>Cancelled</option></select></div>
+      </div>
+      <div class="quote-total-box" style="margin-top:8px">
+        <div class="qt-row"><span>Basic value (before tax)</span><span id="pit-basic" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span id="pit-gst-label">CGST @ 9%</span><span id="pit-cgst" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row"><span id="pit-gst2-label">SGST @ 9%</span><span id="pit-sgst" style="font-family:var(--mono)">₹0</span></div>
+        <div class="qt-row total-row"><span>Total amount after tax</span><span id="pit-total" style="font-family:var(--mono)">₹0</span></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('pi')">Cancel</button><button class="btn btn-primary" id="pi-save-btn" onclick="savePI()">Save &amp; generate PI</button></div>
+  </div>
+</div>
+
 <!-- IMPORT CLIENTS MODAL -->
 <div class="modal-overlay hidden" id="modal-importclients">
   <div class="modal" style="max-width:680px">
@@ -222,6 +281,7 @@ textarea{resize:vertical;min-height:60px}
       <div class="nav-section">Setup</div>
       <button class="nav-item" onclick="showPage('clients')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Clients</button>
       <button class="nav-item" onclick="showPage('pricelist')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Price List</button>
+      <button class="nav-item" onclick="showPage('invoices')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="7" x2="10" y2="7"/></svg>Proforma Invoice</button>
     </nav>
     <div class="sidebar-footer"><div class="stat-pill"><span>Active samples</span><strong id="sb-active">0</strong></div></div>
   </div>
@@ -248,8 +308,19 @@ textarea{resize:vertical;min-height:60px}
       <div class="content"><div class="table-wrap"><table><thead><tr><th>Company</th><th>Contact</th><th>Email</th><th>State</th><th>GSTIN</th><th>Address</th><th>Samples</th></tr></thead><tbody id="clients-table"></tbody></table></div></div>
     </div>
     <div id="page-pricelist" class="hidden">
-      <div class="topbar"><div><div class="page-title">Price List</div><div class="page-sub">All testing charges — Non-NABL &amp; NABL rates</div></div><div class="topbar-actions"><div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="price-search" oninput="renderPriceList()" placeholder="Search test..."></div></div></div>
-      <div class="content"><div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th></tr></thead><tbody id="price-table"></tbody></table></div></div>
+      <div class="topbar"><div><div class="page-title">Price List</div><div class="page-sub">All testing charges — edit rates &amp; add tests</div></div>
+        <div class="topbar-actions">
+          <div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="price-search" oninput="renderPriceList()" placeholder="Search test..."></div>
+          <button class="btn btn-primary" onclick="openModal('addtest')">+ Add test</button>
+        </div>
+      </div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th><th>Action</th></tr></thead><tbody id="price-table"></tbody></table></div></div>
+    </div>
+    <div id="page-invoices" class="hidden">
+      <div class="topbar"><div><div class="page-title">Proforma Invoices</div><div class="page-sub">Create and manage proforma invoices</div></div>
+        <div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('pi')">+ New PI</button></div>
+      </div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>PI No.</th><th>Client</th><th>Quote Ref</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="invoices-table"></tbody></table></div></div>
     </div>
   </div>
 </div>
@@ -621,7 +692,7 @@ function genId(p,a){return p+'-'+new Date().getFullYear()+'-'+String(a.length+1)
 function getRate(t,nabl){return nabl==='nabl'&&t.nabl!=null?t.nabl:t.nonNabl;}
 
 // ── NAVIGATION ─────────────────────────────────────────────────────────
-const PAGES=['dashboard','samples','quotations','reports','clients','pricelist'];
+const PAGES=['dashboard','samples','quotations','reports','clients','pricelist','invoices'];
 function showPage(p){
   PAGES.forEach(x=>document.getElementById('page-'+x).classList.toggle('hidden',x!==p));
   document.querySelectorAll('.nav-item').forEach(el=>{el.classList.remove('active');if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+p+"'"))el.classList.add('active');});
@@ -631,6 +702,7 @@ function showPage(p){
   if(p==='reports')renderReports();
   if(p==='clients')renderClients();
   if(p==='pricelist')renderPriceList();
+  if(p==='invoices')renderInvoices();
 }
 
 // ── MODALS ─────────────────────────────────────────────────────────────
@@ -648,6 +720,8 @@ function openModal(m){
   }
   if(m==='quote'){quoteLines=[];buildQuoteSelector();renderQuoteLines();calcTotal();}
   if(m==='importclients'){openImportModal();return;}
+  if(m==='addtest'){openAddTestModal(null);return;}
+  if(m==='pi'){openPIModal(null);return;}
   if(m==='report'){
     const sel=document.getElementById('r-sample');
     sel.innerHTML='<option value="">Select sample</option>'+samples.map(s=>`<option value="${s.id}">${s.id} — ${s.client} (${s.material})</option>`).join('');
@@ -1484,10 +1558,86 @@ function renderClients(){
 }
 
 // ── PRICE LIST ─────────────────────────────────────────────────────────
+// renderPriceList moved to price list edit section above
+
+// ── PRICE LIST EDIT / ADD ─────────────────────────────────────────────
+let editingTestSr = null;
+
+function openAddTestModal(sr){
+  editingTestSr = sr;
+  if(sr){
+    const t = PRICE_DATA.find(x=>x.sr===sr);
+    if(!t) return;
+    document.getElementById('addtest-title').textContent = 'Edit test';
+    document.getElementById('addtest-btn').textContent = 'Save changes';
+    document.getElementById('at-sr').value = t.sr;
+    document.getElementById('at-name').value = t.name;
+    document.getElementById('at-cat').value = t.cat;
+    document.getElementById('at-nonnabl').value = t.nonNabl;
+    document.getElementById('at-nabl').value = t.nabl||'';
+    document.getElementById('at-remark').value = t.remark||'';
+  } else {
+    document.getElementById('addtest-title').textContent = 'Add new test';
+    document.getElementById('addtest-btn').textContent = 'Add test';
+    ['at-sr','at-name','at-nonnabl','at-nabl','at-remark'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('at-cat').value = '';
+  }
+  document.getElementById('modal-addtest').classList.remove('hidden');
+}
+
+function saveTest(){
+  const name = document.getElementById('at-name').value.trim();
+  const cat  = document.getElementById('at-cat').value;
+  const nonNabl = parseInt(document.getElementById('at-nonnabl').value)||0;
+  if(!name||!cat||!nonNabl){ alert('Test name, category and Non-NABL rate are required.'); return; }
+  const nablVal = document.getElementById('at-nabl').value;
+  const nabl = nablVal&&nablVal.trim()!==''? parseInt(nablVal):null;
+  const sr   = document.getElementById('at-sr').value.trim() || String(PRICE_DATA.length+1);
+  const remark = document.getElementById('at-remark').value.trim();
+  if(editingTestSr){
+    const idx = PRICE_DATA.findIndex(x=>x.sr===editingTestSr);
+    if(idx>-1){ PRICE_DATA[idx]={...PRICE_DATA[idx],name,cat,nonNabl,nabl,remark,sr}; }
+  } else {
+    PRICE_DATA.push({sr,name,cat,nonNabl,nabl,remark});
+  }
+  // persist custom tests in localStorage
+  const custom = PRICE_DATA.filter(t=>t.custom||(!PRICE_DATA_ORIGINAL_SRS.has(t.sr)));
+  localStorage.setItem('rl3-custom-tests', JSON.stringify(PRICE_DATA.filter((_,i)=>i>=PRICE_DATA_BASE_LEN)));
+  // also persist edits to base tests
+  localStorage.setItem('rl3-price-edits', JSON.stringify(
+    PRICE_DATA.slice(0, PRICE_DATA_BASE_LEN).map(t=>({sr:t.sr,nonNabl:t.nonNabl,nabl:t.nabl,remark:t.remark}))
+  ));
+  closeModal('addtest');
+  renderPriceList();
+}
+
+function deleteTest(sr){
+  if(!confirm('Delete this test from the price list?')) return;
+  const idx = PRICE_DATA.findIndex(x=>x.sr===sr);
+  if(idx>-1) PRICE_DATA.splice(idx,1);
+  localStorage.setItem('rl3-custom-tests', JSON.stringify(PRICE_DATA.slice(PRICE_DATA_BASE_LEN)));
+  renderPriceList();
+}
+
+// track base length for persistence
+const PRICE_DATA_BASE_LEN = PRICE_DATA.length;
+const PRICE_DATA_ORIGINAL_SRS = new Set(PRICE_DATA.map(t=>t.sr));
+
+// restore saved edits and custom tests
+(function(){
+  try{
+    const edits = JSON.parse(localStorage.getItem('rl3-price-edits')||'[]');
+    edits.forEach(e=>{ const t=PRICE_DATA.find(x=>x.sr===e.sr); if(t){t.nonNabl=e.nonNabl;t.nabl=e.nabl;t.remark=e.remark;}});
+    const custom = JSON.parse(localStorage.getItem('rl3-custom-tests')||'[]');
+    custom.forEach(t=>PRICE_DATA.push(t));
+  }catch(e){}
+})();
+
 function renderPriceList(){
   const q=(document.getElementById('price-search')?.value||'').toLowerCase();
   const f=q?PRICE_DATA.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q)):PRICE_DATA;
   const catColors={Chemical:'badge-blue',Physical:'badge-teal','Oil & Swelling':'badge-amber',Electrical:'badge-purple','Low Temperature':'badge-blue',Ozone:'badge-red',Rheology:'badge-purple',Miscellaneous:'badge-gray'};
+  const isBase = new Set(Array.from(PRICE_DATA_ORIGINAL_SRS));
   document.getElementById('price-table').innerHTML=f.map(t=>`<tr>
     <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${t.sr}</td>
     <td class="strong">${t.name}${t.groupId?'<span class="group-badge" style="margin-left:6px">GROUP</span>':''}</td>
@@ -1495,7 +1645,378 @@ function renderPriceList(){
     <td style="font-family:var(--mono)">₹${t.nonNabl.toLocaleString('en-IN')}</td>
     <td style="font-family:var(--mono);color:var(--purple)">${t.nabl?'₹'+t.nabl.toLocaleString('en-IN'):'—'}</td>
     <td style="font-size:11px;color:var(--amber)">${t.remark||''}</td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-sm" onclick="openAddTestModal('${t.sr}')">Edit</button>
+      ${!isBase.has(t.sr)?`<button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="deleteTest('${t.sr}')">Delete</button>`:''}
+    </td>
   </tr>`).join('');
+}
+
+// ── PROFORMA INVOICE ──────────────────────────────────────────────────
+const LAB = {
+  name: 'Attuned Polymers Private Limited',
+  address: '311, Rajasthan Technical Centre, Patanwala Compound,
+LBS Road, Ghatkopar (West), Mumbai - 400086, India.',
+  tel: '+91 7400459627',
+  email: 'info@attunedpolymerslab.com',
+  website: 'www.attunedpolymerslab.com',
+  gstin: '27AAACA6018M1ZN',
+  sac: '998346',
+  bank: {
+    name: 'Attuned Polymers Private Limited',
+    bank: 'Bank of Baroda',
+    branch: 'Ghatkopar (West)',
+    account: '03950200001024',
+    type: 'Current Account',
+    ifsc: 'BARB0GHATKO',
+    ifscNote: '5th is Zero and last letter is O'
+  }
+};
+
+let proformas = JSON.parse(localStorage.getItem('rl3-proformas')||'[]');
+let piLines = []; // [{desc, basicValue, samples}]
+
+function getFY(){
+  const now = new Date();
+  const yr = now.getMonth()>=3 ? now.getFullYear() : now.getFullYear()-1;
+  return `${yr}-${String(yr+1).slice(-2)}`;
+}
+
+function genPINo(){
+  // find highest serial for current FY
+  const fy = getFY();
+  const existing = proformas.filter(p=>p.fy===fy);
+  const next = String(existing.length+1).padStart(3,'0');
+  return `PI ${next} / ${fy}`;
+}
+
+function openPIModal(editId){
+  updateClientDatalist();
+  piLines = editId ? JSON.parse(JSON.stringify(proformas.find(p=>p.id===editId)?.lines||[])) : [{desc:'Being charges for carry out testing on your sample.',basicValue:0,samples:null}];
+  // populate quote dropdown
+  const sel = document.getElementById('pi-quote-link');
+  sel.innerHTML = '<option value="">— Create standalone PI —</option>' +
+    quotes.map(q=>`<option value="${q.id}">${q.id} — ${q.client}</option>`).join('');
+  // populate client datalist
+  const dl = document.getElementById('pi-client-names');
+  if(dl) dl.innerHTML = clients.map(c=>`<option value="${c.company}">`).join('');
+  if(editId){
+    const p = proformas.find(x=>x.id===editId);
+    document.getElementById('pi-modal-title').textContent = 'Edit PI — '+editId;
+    document.getElementById('pi-save-btn').textContent = 'Update PI';
+    document.getElementById('pi-client').value = p.client||'';
+    document.getElementById('pi-ref').value = p.ref||'';
+    document.getElementById('pi-disc').value = p.disc||0;
+    document.getElementById('pi-gsttype').value = p.gstType||'cgst_sgst';
+    document.getElementById('pi-status').value = p.status||'Draft';
+    document.getElementById('pi-tests').value = p.testsList||'';
+    sel.value = p.linkedQuote||'';
+    document.getElementById('modal-pi').dataset.editId = editId;
+  } else {
+    document.getElementById('pi-modal-title').textContent = 'New Proforma Invoice';
+    document.getElementById('pi-save-btn').textContent = 'Save & generate PI';
+    ['pi-client','pi-ref'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pi-disc').value = 0;
+    document.getElementById('pi-gsttype').value = 'cgst_sgst';
+    document.getElementById('pi-status').value = 'Draft';
+    document.getElementById('pi-tests').value = '';
+    sel.value = '';
+    document.getElementById('modal-pi').dataset.editId = '';
+  }
+  renderPILines();
+  calcPITotal();
+  showPIClientInfo();
+  document.getElementById('modal-pi').classList.remove('hidden');
+}
+
+function onPIQuoteLink(){
+  const qId = document.getElementById('pi-quote-link').value;
+  if(!qId) return;
+  const q = quotes.find(x=>x.id===qId);
+  if(!q) return;
+  document.getElementById('pi-client').value = q.client||'';
+  // build tests list from quote
+  const testNames = (q.lines||[]).map(l=>l.name);
+  if(q.condLines) q.condLines.forEach(c=>testNames.push(c.label+' ('+c.days+' day'+(c.days>1?'s':'')+')'));
+  if(q.ozoneLine) testNames.push('Ozone Resistance @ '+q.ozoneLine.pphm+' PPHM');
+  document.getElementById('pi-tests').value = testNames.join(', ');
+  // set basic value from quote total before tax
+  const disc = q.disc||0;
+  const gstPct = q.gstPct||18;
+  const basic = Math.round(q.amount / ((1-disc/100) * (1+gstPct/100)));
+  if(piLines.length>0){ piLines[0].basicValue = basic; }
+  renderPILines();
+  calcPITotal();
+  showPIClientInfo();
+}
+
+function showPIClientInfo(){
+  const name = document.getElementById('pi-client').value.trim();
+  const c = clients.find(x=>x.company.toLowerCase()===name.toLowerCase());
+  const box = document.getElementById('pi-client-details');
+  const info = document.getElementById('pi-client-info');
+  if(c){
+    info.textContent = [c.address||'', c.state||'', c.gst?'GSTIN: '+c.gst:''].filter(Boolean).join(' | ');
+    box.style.display='block';
+  } else {
+    box.style.display='none';
+  }
+}
+
+function addPILine(){
+  piLines.push({desc:'',basicValue:0,samples:null});
+  renderPILines();
+}
+
+function removePILine(i){
+  piLines.splice(i,1);
+  renderPILines();
+  calcPITotal();
+}
+
+function renderPILines(){
+  const container = document.getElementById('pi-lines');
+  if(!piLines.length){container.innerHTML='';return;}
+  container.innerHTML = piLines.map((l,i)=>`
+    <div class="quote-line" style="grid-template-columns:1fr 100px 80px 80px 28px">
+      <input value="${l.desc||''}" placeholder="Description of service" style="font-size:12px;padding:5px 7px" oninput="piLines[${i}].desc=this.value">
+      <input type="number" value="${l.basicValue||0}" min="0" style="font-size:12px;padding:5px 7px;font-family:var(--mono)" oninput="piLines[${i}].basicValue=parseInt(this.value)||0;calcPITotal()">
+      <input value="${l.samples||''}" placeholder="—" style="font-size:12px;padding:5px 7px;text-align:center" oninput="piLines[${i}].samples=this.value">
+      <span style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:right;padding-right:4px" id="pil-${i}">₹${(l.basicValue||0).toLocaleString('en-IN')}</span>
+      <button class="remove-btn" onclick="removePILine(${i})">✕</button>
+    </div>`).join('');
+}
+
+function calcPITotal(){
+  const basic = piLines.reduce((a,l)=>a+(parseInt(l.basicValue)||0),0);
+  const disc = parseFloat(document.getElementById('pi-disc')?.value)||0;
+  const afterDisc = basic*(1-disc/100);
+  const gstType = document.getElementById('pi-gsttype')?.value||'cgst_sgst';
+  const tax1 = Math.round(afterDisc*0.09);
+  const tax2 = Math.round(afterDisc*0.09);
+  const total = Math.round(afterDisc + tax1 + tax2);
+  document.getElementById('pit-basic').textContent = '₹'+afterDisc.toLocaleString('en-IN');
+  if(gstType==='igst'){
+    document.getElementById('pit-gst-label').textContent = 'IGST @ 18%';
+    document.getElementById('pit-gst2-label').textContent = '';
+    document.getElementById('pit-cgst').textContent = '₹'+(tax1+tax2).toLocaleString('en-IN');
+    document.getElementById('pit-sgst').textContent = '';
+  } else {
+    document.getElementById('pit-gst-label').textContent = 'CGST @ 9%';
+    document.getElementById('pit-gst2-label').textContent = 'SGST @ 9%';
+    document.getElementById('pit-cgst').textContent = '₹'+tax1.toLocaleString('en-IN');
+    document.getElementById('pit-sgst').textContent = '₹'+tax2.toLocaleString('en-IN');
+  }
+  document.getElementById('pit-total').textContent = '₹'+total.toLocaleString('en-IN');
+}
+
+function savePI(){
+  const client = document.getElementById('pi-client').value.trim();
+  if(!client){ alert('Client name required.'); return; }
+  const basic = piLines.reduce((a,l)=>a+(parseInt(l.basicValue)||0),0);
+  if(!basic){ alert('Add at least one service line with a value.'); return; }
+  const disc = parseFloat(document.getElementById('pi-disc').value)||0;
+  const afterDisc = basic*(1-disc/100);
+  const gstType = document.getElementById('pi-gsttype').value||'cgst_sgst';
+  const tax = Math.round(afterDisc*0.09);
+  const total = Math.round(afterDisc + tax*2);
+  const editId = document.getElementById('modal-pi').dataset.editId;
+  const piObj = {
+    id: editId || genPINo(),
+    fy: getFY(),
+    client,
+    ref: document.getElementById('pi-ref').value,
+    linkedQuote: document.getElementById('pi-quote-link').value,
+    lines: JSON.parse(JSON.stringify(piLines)),
+    testsList: document.getElementById('pi-tests').value,
+    disc, gstType, basic, tax, total,
+    status: document.getElementById('pi-status').value,
+    date: editId ? proformas.find(p=>p.id===editId)?.date : new Date().toLocaleDateString('en-IN'),
+  };
+  if(editId){
+    const idx = proformas.findIndex(p=>p.id===editId);
+    if(idx>-1) proformas[idx] = piObj;
+  } else {
+    proformas.unshift(piObj);
+  }
+  localStorage.setItem('rl3-proformas', JSON.stringify(proformas));
+  document.getElementById('modal-pi').dataset.editId='';
+  closeModal('pi');
+  renderInvoices();
+  renderDash();
+}
+
+function renderInvoices(){
+  const tb = document.getElementById('invoices-table');
+  if(!proformas.length){ tb.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No proforma invoices yet.</td></tr>`; return; }
+  tb.innerHTML = proformas.map(p=>`<tr>
+    <td class="strong" style="font-family:var(--mono);font-size:12px">${p.id}</td>
+    <td class="strong">${p.client}</td>
+    <td style="font-family:var(--mono);font-size:11px">${p.linkedQuote?`<span class="badge badge-teal">${p.linkedQuote}</span>`:'—'}</td>
+    <td style="font-family:var(--mono);color:var(--teal)">₹${p.total.toLocaleString('en-IN')}</td>
+    <td>${p.status==='Paid'?'<span class="badge badge-teal">Paid</span>':p.status==='Issued'?'<span class="badge badge-blue">Issued</span>':p.status==='Cancelled'?'<span class="badge badge-red">Cancelled</span>':'<span class="badge badge-gray">Draft</span>'}</td>
+    <td>${p.date}</td>
+    <td style="display:flex;gap:4px">
+      <button class="btn btn-ghost btn-sm" onclick="openPIModal('${p.id}')">Edit</button>
+      <button class="btn btn-ghost btn-sm" onclick="openPIPrintDialog('${p.id}')">Print</button>
+    </td>
+  </tr>`).join('');
+}
+
+let piPrintTarget = null;
+function openPIPrintDialog(id){
+  piPrintTarget = id;
+  // simple dialog: original or duplicate
+  const choice = confirm('Click OK for Original copy\nClick Cancel for Duplicate copy');
+  printPI(id, choice ? 'original' : 'duplicate');
+}
+
+function numberToWords(n){
+  const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  if(n===0)return'Zero';
+  function inWords(num){
+    if(num<20)return a[num];
+    if(num<100)return b[Math.floor(num/10)]+(num%10?' '+a[num%10]:'');
+    if(num<1000)return a[Math.floor(num/100)]+' Hundred'+(num%100?' '+inWords(num%100):'');
+    if(num<100000)return inWords(Math.floor(num/1000))+' Thousand'+(num%1000?' '+inWords(num%1000):'');
+    if(num<10000000)return inWords(Math.floor(num/100000))+' Lakh'+(num%100000?' '+inWords(num%100000):'');
+    return inWords(Math.floor(num/10000000))+' Crore'+(num%10000000?' '+inWords(num%10000000):'');
+  }
+  const parts = String(n).split('.');
+  let words = inWords(parseInt(parts[0]));
+  if(parts[1]&&parseInt(parts[1])>0) words += ' and '+inWords(parseInt(parts[1]))+' Paise';
+  return words + ' Only.';
+}
+
+function printPI(id, copy){
+  const p = proformas.find(x=>x.id===id);
+  if(!p) return;
+  const clientRec = clients.find(c=>c.company.toLowerCase()===p.client.toLowerCase());
+  const isOriginal = (copy==='original');
+  const disc = p.disc||0;
+  const afterDisc = p.basic*(1-disc/100);
+  const gstType = p.gstType||'cgst_sgst';
+  const tax = Math.round(afterDisc*0.09);
+  const total = Math.round(afterDisc + tax*2);
+  const testsArr = (p.testsList||'').split(',').map(t=>t.trim()).filter(Boolean);
+
+  const serviceRows = p.lines.map((l,i)=>`
+    <tr>
+      <td style="text-align:center"></td>
+      <td>${l.desc||''}</td>
+      <td style="text-align:center">${p.sac||LAB.sac}</td>
+      <td style="text-align:right">${l.basicValue?l.basicValue.toLocaleString('en-IN'):''}</td>
+      <td style="text-align:center">${l.samples||'—'}</td>
+      <td style="text-align:right">${l.basicValue?l.basicValue.toLocaleString('en-IN'):''}</td>
+      <td style="text-align:right">${gstType==='igst'?Math.round(l.basicValue*0.18).toLocaleString('en-IN'):Math.round(l.basicValue*0.09).toLocaleString('en-IN')}</td>
+      <td style="text-align:right">${gstType==='igst'?Math.round(l.basicValue*0.18).toLocaleString('en-IN'):Math.round(l.basicValue*0.09).toLocaleString('en-IN')}</td>
+    </tr>`).join('');
+
+  const testListRows = testsArr.map((t,i)=>`<tr><td style="text-align:center">${i+1}</td><td colspan="7" style="padding-left:12px">${t}</td></tr>`).join('');
+
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>${p.id}</title><style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px;max-width:800px;margin:auto}
+    .header{text-align:center;margin-bottom:12px}
+    .header h1{font-size:18px;font-weight:bold;color:#111;margin-bottom:4px}
+    .header p{font-size:11px;color:#444;line-height:1.6}
+    .copy-strip{display:flex;justify-content:flex-end;gap:0;margin-bottom:8px}
+    .copy-box{border:1px solid #999;padding:4px 10px;font-size:11px;text-align:center;min-width:90px}
+    .copy-box.active{background:#111;color:#fff;font-weight:bold}
+    h2{font-size:14px;font-weight:bold;text-align:center;border:2px solid #111;padding:6px;margin-bottom:8px;letter-spacing:1px}
+    .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #999;margin-bottom:8px}
+    .info-block{padding:8px 10px;font-size:11px;line-height:1.8}
+    .info-block:first-child{border-right:1px solid #999}
+    .info-label{font-weight:bold;color:#555;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+    table{width:100%;border-collapse:collapse;margin-bottom:8px;font-size:11px}
+    th{background:#111;color:#fff;padding:6px 8px;text-align:left;font-weight:600;font-size:10px}
+    td{padding:5px 8px;border:1px solid #ddd;vertical-align:top}
+    tr:nth-child(even) td{background:#fafafa}
+    .totals-grid{display:grid;grid-template-columns:1fr 200px;gap:16px;margin-top:8px}
+    .bank-box{border:1px solid #ddd;padding:10px;font-size:11px;line-height:1.9;border-radius:4px}
+    .bank-box strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#555;margin-bottom:4px}
+    .totals-table{width:100%;border-collapse:collapse;font-size:12px}
+    .totals-table td{padding:4px 8px;border-bottom:1px solid #eee}
+    .totals-table .grand td{font-weight:bold;font-size:13px;border-top:2px solid #111;border-bottom:none;padding-top:8px}
+    .words-box{margin-top:8px;padding:6px 10px;border:1px dashed #ccc;font-size:11px;font-style:italic}
+    .sig-box{margin-top:16px;text-align:right;font-size:11px}
+    .cheque-note{font-size:10px;color:#555;margin-top:8px;text-align:center;border-top:1px solid #eee;padding-top:6px}
+    @media print{body{padding:10px}button{display:none}}
+  </style></head><body>
+    <div class="header">
+      <h1>${LAB.name}</h1>
+      <p>${LAB.address.replace(/\n/,'<br>')}<br>
+      Tel: ${LAB.tel} &nbsp;|&nbsp; Email: ${LAB.email} &nbsp;|&nbsp; ${LAB.website}</p>
+    </div>
+    <div class="copy-strip">
+      <div class="copy-box ${isOriginal?'active':''}">&#10003; Original For Service Recipient</div>
+      <div class="copy-box ${!isOriginal?'active':''}">Duplicate For Service Provider</div>
+    </div>
+    <h2>PROFORMA INVOICE</h2>
+    <div class="info-grid">
+      <div class="info-block">
+        <div class="info-label">Receiver Details (Billed To)</div>
+        <strong>${p.client}</strong><br>
+        ${clientRec?clientRec.address||'':''}
+        ${clientRec&&clientRec.gst?'<br>GSTIN: '+clientRec.gst:''}
+      </div>
+      <div class="info-block">
+        <div class="info-label">Supplier Details</div>
+        <strong>PROFORMA NO.</strong> &nbsp; ${p.id}<br>
+        <strong>DATE:</strong> &nbsp; ${p.date}<br>
+        <strong>GSTIN:</strong> &nbsp; ${LAB.gstin}<br>
+        ${p.ref?'<strong>LETTER REF.:</strong> &nbsp; '+p.ref:''}
+      </div>
+    </div>
+    <table>
+      <tr>
+        <th style="width:30px">Sr</th><th>Name of Service</th><th style="width:55px">SAC</th>
+        <th style="width:80px;text-align:right">Basic Value</th><th style="width:65px;text-align:center">No. of Samples</th>
+        <th style="width:80px;text-align:right">Taxable Value</th>
+        <th style="width:70px;text-align:right">${gstType==='igst'?'IGST @ 18%':'CGST @ 9%'}</th>
+        <th style="width:70px;text-align:right">${gstType==='igst'?'Amount':'SGST @ 9%'}</th>
+      </tr>
+      ${serviceRows}
+      ${testListRows}
+      <tr style="font-weight:bold;background:#f5f5f5">
+        <td colspan="3" style="text-align:right;font-weight:bold">Total</td>
+        <td style="text-align:right">${afterDisc.toLocaleString('en-IN')}</td>
+        <td></td>
+        <td style="text-align:right">${afterDisc.toLocaleString('en-IN')}</td>
+        <td style="text-align:right">${tax.toLocaleString('en-IN')}</td>
+        <td style="text-align:right">${tax.toLocaleString('en-IN')}</td>
+      </tr>
+    </table>
+    <div class="totals-grid">
+      <div>
+        <div class="bank-box">
+          <strong>Bank Details</strong>
+          Company Name : ${LAB.bank.name}<br>
+          Bank Name &nbsp;&nbsp;&nbsp;: ${LAB.bank.bank}<br>
+          Branch &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${LAB.bank.branch}<br>
+          A/c No. &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${LAB.bank.account}<br>
+          A/c Type &nbsp;&nbsp;&nbsp;&nbsp;: ${LAB.bank.type}<br>
+          IFSC Code &nbsp;&nbsp;: ${LAB.bank.ifsc}<br>
+          <span style="font-size:10px;color:#888">${LAB.bank.ifscNote}</span>
+        </div>
+        <div class="cheque-note">Kindly Draw Your Cheque/DD in Favour of <strong>${LAB.bank.name}</strong></div>
+      </div>
+      <table class="totals-table">
+        <tr><td>Total Amount Before Tax</td><td style="text-align:right">${afterDisc.toLocaleString('en-IN')}</td></tr>
+        ${gstType==='igst'
+          ?`<tr><td>Add : IGST @ 18%</td><td style="text-align:right">${(tax*2).toLocaleString('en-IN')}</td></tr>`
+          :`<tr><td>Add : CGST @ 9%</td><td style="text-align:right">${tax.toLocaleString('en-IN')}</td></tr>
+           <tr><td>Add : SGST @ 9%</td><td style="text-align:right">${tax.toLocaleString('en-IN')}</td></tr>`}
+        <tr class="grand"><td>Total Amount After Tax</td><td style="text-align:right">${total.toLocaleString('en-IN')}</td></tr>
+      </table>
+    </div>
+    <div class="words-box">Total Invoice Amount in Words: <strong>${numberToWords(total)}</strong></div>
+    <div class="sig-box"><br><br>____________________________<br>Authorised Signatory</div>
+  </body></html>`);
+  w.document.close();
+  w.print();
 }
 
 // ── DASHBOARD ──────────────────────────────────────────────────────────
@@ -1509,7 +2030,8 @@ function renderDash(){
     <div class="metric-card"><div class="metric-val" style="color:var(--teal)">${done}</div><div class="metric-label">Completed</div></div>
     <div class="metric-card"><div class="metric-val" style="color:var(--purple)">₹${totalRev.toLocaleString('en-IN')}</div><div class="metric-label">Total quoted value</div></div>
     <div class="metric-card"><div class="metric-val">${quotes.length}</div><div class="metric-label">Quotations raised</div></div>
-    <div class="metric-card"><div class="metric-val">${reports.length}</div><div class="metric-label">Reports generated</div></div>`;
+    <div class="metric-card"><div class="metric-val">${reports.length}</div><div class="metric-label">Reports generated</div></div>
+    <div class="metric-card"><div class="metric-val" style="color:var(--amber)">${proformas.length}</div><div class="metric-label">Proforma invoices</div></div>`;
   const tb=document.getElementById('dash-table');
   if(!samples.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3)">No samples yet.</td></tr>`;return;}
   tb.innerHTML=samples.slice(0,8).map(s=>`<tr onclick="showPage('samples')" style="cursor:pointer"><td class="strong" style="font-family:var(--mono);font-size:12px">${s.id}</td><td class="strong">${s.client}</td><td>${s.material}</td><td>${statusBadge(s.status)}</td><td>${s.date}</td></tr>`).join('');
