@@ -282,6 +282,7 @@ textarea{resize:vertical;min-height:60px}
       <button class="nav-item" onclick="showPage('clients')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Clients</button>
       <button class="nav-item" onclick="showPage('pricelist')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Price List</button>
       <button class="nav-item" onclick="showPage('invoices')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="14" y2="14"/><line x1="8" y1="7" x2="10" y2="7"/></svg>Proforma Invoice</button>
+      <button class="nav-item" onclick="showPage('sampreq')"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Sample Req.</button>
     </nav>
     <div class="sidebar-footer"><div class="stat-pill"><span>Active samples</span><strong id="sb-active">0</strong></div></div>
   </div>
@@ -314,13 +315,39 @@ textarea{resize:vertical;min-height:60px}
           <button class="btn btn-primary" onclick="openModal('addtest')">+ Add test</button>
         </div>
       </div>
-      <div class="content"><div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th><th>Action</th></tr></thead><tbody id="price-table"></tbody></table></div></div>
+      <div class="content"><div class="table-wrap"><table><thead><tr><th>SR</th><th>Test Name</th><th>Category</th><th>Unit</th><th>Standard</th><th>Non-NABL (₹)</th><th>NABL (₹)</th><th>Remarks</th><th>Action</th></tr></thead><tbody id="price-table"></tbody></table></div></div>
     </div>
     <div id="page-invoices" class="hidden">
       <div class="topbar"><div><div class="page-title">Proforma Invoices</div><div class="page-sub">Create and manage proforma invoices</div></div>
         <div class="topbar-actions"><button class="btn btn-primary" onclick="openModal('pi')">+ New PI</button></div>
       </div>
       <div class="content"><div class="table-wrap"><table><thead><tr><th>PI No.</th><th>Client</th><th>Quote Ref</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="invoices-table"></tbody></table></div></div>
+    </div>
+    <div id="page-sampreq" class="hidden">
+      <div class="topbar">
+        <div><div class="page-title">Sample Requirements Calculator</div><div class="page-sub">Select tests to get recommended specimen dimensions and total slab estimate</div></div>
+        <div class="topbar-actions">
+          <div class="search-bar"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input id="sr-search" oninput="filterSRTests()" placeholder="Search test..."></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)">
+            No. of samples:
+            <input type="number" id="sr-samples" value="1" min="1" style="width:56px;padding:5px 8px;font-size:13px" oninput="calcSampleReq()">
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="clearSRSelection()">Clear all</button>
+          <button class="btn btn-primary btn-sm" onclick="printSampleReq()">Print</button>
+        </div>
+      </div>
+      <div class="content" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <!-- Left: test selector -->
+        <div>
+          <div class="section-title" style="margin-bottom:12px">Select tests required</div>
+          <div id="sr-test-selector" style="max-height:calc(100vh - 200px);overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:10px"></div>
+        </div>
+        <!-- Right: results -->
+        <div>
+          <div class="section-title" style="margin-bottom:12px">Recommended sample requirement</div>
+          <div id="sr-results" style="color:var(--text3);font-size:13px;padding:24px;text-align:center">Select tests on the left to see requirements</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -523,148 +550,149 @@ function doLogout(){
 // -- PRICE DATA ---------------------------------------------------------
 // groupId: tests with same groupId share one charge (billed once × qty)
 const PRICE_DATA=[
-  {sr:'1',name:'Acetone Extract (& Extraction)',cat:'Chemical',nonNabl:2100,nabl:2200},
-  {sr:'2',name:'RHC Content (Polymer Content)',cat:'Chemical',nonNabl:6200,nabl:null},
-  {sr:'3',name:'Ash Content',cat:'Chemical',nonNabl:2200,nabl:2200},
-  {sr:'4',name:'Sulfasion Ash Content (Neoprene/Hypalon/CPE)',cat:'Chemical',nonNabl:2450,nabl:null},
-  {sr:'5',name:'Bulk Density',cat:'Chemical',nonNabl:1300,nabl:null},
-  {sr:'6',name:'Carbon Black Content',cat:'Chemical',nonNabl:2450,nabl:null},
-  {sr:'7',name:'Chloroform Extract',cat:'Chemical',nonNabl:2450,nabl:null},
-  {sr:'8',name:'Content of Nylon',cat:'Chemical',nonNabl:2550,nabl:null},
-  {sr:'9',name:'Content of Polyester',cat:'Chemical',nonNabl:2550,nabl:null},
-  {sr:'10',name:'Dry Rubber Content (Latex)',cat:'Chemical',nonNabl:2200,nabl:null},
-  {sr:'11',name:'Fibre Glass Content',cat:'Chemical',nonNabl:4200,nabl:null},
-  {sr:'12',name:'Filler Content',cat:'Chemical',nonNabl:2050,nabl:null},
-  {sr:'13',name:'Free Sulphur',cat:'Chemical',nonNabl:2050,nabl:null},
-  {sr:'14',name:'Total Sulphur Content',cat:'Chemical',nonNabl:2500,nabl:null},
-  {sr:'15',name:'FTIR',cat:'Chemical',nonNabl:4200,nabl:null},
-  {sr:'16',name:'Identification of Plastic',cat:'Chemical',nonNabl:4200,nabl:null},
-  {sr:'17',name:'Identification of Rubber',cat:'Chemical',nonNabl:4200,nabl:4300},
-  {sr:'18',name:'Ignition Loss',cat:'Chemical',nonNabl:2500,nabl:null},
-  {sr:'19',name:'Solubility / Insolubility in Acid',cat:'Chemical',nonNabl:2200,nabl:null},
-  {sr:'20',name:'Melt Flow Index (MFI)',cat:'Chemical',nonNabl:2550,nabl:null},
-  {sr:'21',name:'Melting Point',cat:'Chemical',nonNabl:1550,nabl:null},
-  {sr:'22',name:'Moisture Content',cat:'Chemical',nonNabl:1550,nabl:1650},
-  {sr:'27',name:'TGA (Thermo Gravity Analysis)',cat:'Chemical',nonNabl:5800,nabl:null},
-  {sr:'28',name:'Total Solid Content',cat:'Chemical',nonNabl:1650,nabl:null},
-  {sr:'30',name:'Zinc Oxide Purity / Content',cat:'Chemical',nonNabl:2500,nabl:null},
-  {sr:'31',name:'Volatile Content',cat:'Chemical',nonNabl:2250,nabl:null},
-  {sr:'59',name:'pH Value',cat:'Chemical',nonNabl:1450,nabl:null},
-  {sr:'76',name:'Asbestos Content',cat:'Chemical',nonNabl:2900,nabl:null},
-  {sr:'90',name:'Acidity',cat:'Chemical',nonNabl:1600,nabl:null},
-  {sr:'116',name:'MBTS Purity',cat:'Chemical',nonNabl:2150,nabl:null},
-  {sr:'129',name:'Copper Content',cat:'Chemical',nonNabl:2750,nabl:null},
-  {sr:'130',name:'Silver Content',cat:'Chemical',nonNabl:2750,nabl:null},
-  {sr:'133',name:'DBP Absorption',cat:'Chemical',nonNabl:2100,nabl:null},
-  {sr:'135',name:'Heavy Metal',cat:'Chemical',nonNabl:2750,nabl:null,remark:'Per metal'},
-  {sr:'143',name:'Iodine Absorption',cat:'Chemical',nonNabl:2100,nabl:null},
-  // Physical — rubber mech group
-  {sr:'42',name:'Tensile Strength (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
-  {sr:'43',name:'Elongation at Break (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
-  {sr:'44',name:'Modulus 100% / 200% / 300% (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group'},
-  // Physical — plastic mech group
-  {sr:'45',name:'Tensile Strength (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
-  {sr:'46',name:'Elongation at Break (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
-  {sr:'47',name:'Modulus 100% / 200% / 300% (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group'},
-  // Physical — rest
-  {sr:'23',name:'Rebound Resilience',cat:'Physical',nonNabl:1550,nabl:1650},
-  {sr:'25',name:'Specific Gravity / Density of Raw Material',cat:'Physical',nonNabl:1450,nabl:1450},
-  {sr:'26',name:'Specific Gravity / Density of Chemical Powder',cat:'Physical',nonNabl:1550,nabl:null},
-  {sr:'32',name:'Load @ 25% Deflection (RMA Value)',cat:'Physical',nonNabl:3150,nabl:3050},
-  {sr:'35',name:'Dimensions',cat:'Physical',nonNabl:1100,nabl:null},
-  {sr:'36',name:'Hose Dimensions',cat:'Physical',nonNabl:1000,nabl:null},
-  {sr:'41a',name:'Hardness — Shore A',cat:'Physical',nonNabl:650,nabl:650},
-  {sr:'41b',name:'Hardness — Shore D',cat:'Physical',nonNabl:900,nabl:null},
-  {sr:'41c',name:'Hardness — IRHD',cat:'Physical',nonNabl:900,nabl:null},
-  {sr:'41d',name:'Hardness — Micro Hardness',cat:'Physical',nonNabl:1100,nabl:null},
-  {sr:'48',name:'Tear Strength / Angular Tear',cat:'Physical',nonNabl:2100,nabl:2100},
-  {sr:'49',name:'Tension Set',cat:'Physical',nonNabl:2100,nabl:2100},
-  {sr:'50',name:'Specific Gravity of Finished Product',cat:'Physical',nonNabl:1450,nabl:1500},
-  {sr:'51',name:'Load Recovery',cat:'Physical',nonNabl:2000,nabl:null},
-  {sr:'53',name:'Compressibility',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'54',name:'Compressive Strength',cat:'Physical',nonNabl:3050,nabl:null},
-  {sr:'55',name:'Deflection Load',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'56',name:'Abrasion Index (DIN)',cat:'Physical',nonNabl:3100,nabl:3100},
-  {sr:'57',name:'Comp / Abrasion Loss',cat:'Physical',nonNabl:2600,nabl:2600},
-  {sr:'60',name:'Demattia Flex Testing (Cut Growth & Initiation)',cat:'Physical',nonNabl:2450,nabl:null},
-  {sr:'61',name:'Ross Flex Testing (Micro/Hawai)',cat:'Physical',nonNabl:2450,nabl:null},
-  {sr:'62',name:'Crack Initiation KC',cat:'Physical',nonNabl:2450,nabl:2450},
-  {sr:'63',name:'600% Cut Growth KC',cat:'Physical',nonNabl:2450,nabl:2450},
-  {sr:'64',name:'Compression Set',cat:'Physical',nonNabl:2050,nabl:2100},
-  {sr:'65',name:'Load Deflection Upto 50 KGS',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'66',name:'Load Deflection Beyond 50 KGS',cat:'Physical',nonNabl:2750,nabl:null},
-  {sr:'67',name:'Split Tear (Micro/Hawai)',cat:'Physical',nonNabl:2000,nabl:null},
-  {sr:'68',name:'Shrinkage (Micro/Hawai)',cat:'Physical',nonNabl:1650,nabl:null},
-  {sr:'72',name:'Bond Strength / Adhesion Strength',cat:'Physical',nonNabl:2750,nabl:3050},
-  {sr:'73',name:'Bond Strength — Rubber to Metal',cat:'Physical',nonNabl:2750,nabl:3050},
-  {sr:'77',name:'Shear Strength (Dry)',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'78',name:'Shear Strength (Wet)',cat:'Physical',nonNabl:2600,nabl:null},
-  {sr:'99',name:'Damping Co-efficient',cat:'Physical',nonNabl:3200,nabl:null},
-  {sr:'101',name:'Izod Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'102',name:'Charpy Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'105',name:'Goodrich Heat Built Up',cat:'Physical',nonNabl:2900,nabl:null},
-  {sr:'107',name:'Thickness',cat:'Physical',nonNabl:700,nabl:null},
-  {sr:'108',name:'Shrinkage',cat:'Physical',nonNabl:1400,nabl:null},
-  {sr:'114',name:'Burst Pressure',cat:'Physical',nonNabl:3150,nabl:null},
-  {sr:'119',name:'Flexural Strength',cat:'Physical',nonNabl:3150,nabl:null},
-  {sr:'120',name:'Impact Strength',cat:'Physical',nonNabl:1950,nabl:null},
-  {sr:'121',name:'Vicat Softening Temp',cat:'Physical',nonNabl:2500,nabl:null},
-  {sr:'123',name:'Leakage Test',cat:'Physical',nonNabl:2050,nabl:null},
+  // Chemical
+  {sr:'1',name:'Acetone Extract (& Extraction)',cat:'Chemical',nonNabl:2100,nabl:2200,unit:'%',std:'IS 2779 / ASTM D297',specimen:'~5g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'2',name:'RHC Content (Polymer Content)',cat:'Chemical',nonNabl:6200,nabl:null,unit:'%',std:'ASTM D297',specimen:'~5g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'3',name:'Ash Content',cat:'Chemical',nonNabl:2200,nabl:2200,unit:'%',std:'IS 2403 / ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'4',name:'Sulfasion Ash Content (Neoprene/Hypalon/CPE)',cat:'Chemical',nonNabl:2450,nabl:null,unit:'%',std:'ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'5',name:'Bulk Density',cat:'Chemical',nonNabl:1300,nabl:null,unit:'g/cm³',std:'ASTM D1895',specimen:'~50g of material',pieces:1,specimenType:'Powder/granules'},
+  {sr:'6',name:'Carbon Black Content',cat:'Chemical',nonNabl:2450,nabl:null,unit:'%',std:'ASTM D1603 / ISO 6964',specimen:'~1g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'7',name:'Chloroform Extract',cat:'Chemical',nonNabl:2450,nabl:null,unit:'%',std:'IS 2779',specimen:'~5g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'8',name:'Content of Nylon',cat:'Chemical',nonNabl:2550,nabl:null,unit:'%',std:'ASTM D297',specimen:'~5g of material',pieces:1,specimenType:'Compound piece'},
+  {sr:'9',name:'Content of Polyester',cat:'Chemical',nonNabl:2550,nabl:null,unit:'%',std:'ASTM D297',specimen:'~5g of material',pieces:1,specimenType:'Compound piece'},
+  {sr:'10',name:'Dry Rubber Content (Latex)',cat:'Chemical',nonNabl:2200,nabl:null,unit:'%',std:'IS 7814 / ISO 124',specimen:'~10g of latex',pieces:1,specimenType:'Liquid sample'},
+  {sr:'11',name:'Fibre Glass Content',cat:'Chemical',nonNabl:4200,nabl:null,unit:'%',std:'ASTM D2584',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'12',name:'Filler Content',cat:'Chemical',nonNabl:2050,nabl:null,unit:'%',std:'ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'13',name:'Free Sulphur',cat:'Chemical',nonNabl:2050,nabl:null,unit:'%',std:'IS 2363 / ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'14',name:'Total Sulphur Content',cat:'Chemical',nonNabl:2500,nabl:null,unit:'%',std:'ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'15',name:'FTIR',cat:'Chemical',nonNabl:4200,nabl:null,unit:'Spectrum',std:'ASTM E1252',specimen:'~1g or thin film',pieces:1,specimenType:'Small piece / film'},
+  {sr:'16',name:'Identification of Plastic',cat:'Chemical',nonNabl:4200,nabl:null,unit:'ID Report',std:'ASTM E1252',specimen:'~1g or thin film',pieces:1,specimenType:'Small piece / film'},
+  {sr:'17',name:'Identification of Rubber',cat:'Chemical',nonNabl:4200,nabl:4300,unit:'ID Report',std:'IS 7836 / ASTM D3677',specimen:'~1g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'18',name:'Ignition Loss',cat:'Chemical',nonNabl:2500,nabl:null,unit:'%',std:'ASTM D1509',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'19',name:'Solubility / Insolubility in Acid',cat:'Chemical',nonNabl:2200,nabl:null,unit:'%',std:'ASTM D297',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'20',name:'Melt Flow Index (MFI)',cat:'Chemical',nonNabl:2550,nabl:null,unit:'g/10 min',std:'ASTM D1238 / ISO 1133',specimen:'~5g of plastic pellets/powder',pieces:1,specimenType:'Pellets / powder'},
+  {sr:'21',name:'Melting Point',cat:'Chemical',nonNabl:1550,nabl:null,unit:'°C',std:'ASTM D3418',specimen:'~5mg',pieces:1,specimenType:'Small piece'},
+  {sr:'22',name:'Moisture Content',cat:'Chemical',nonNabl:1550,nabl:1650,unit:'%',std:'IS 7229 / ASTM D1509',specimen:'~5g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'27',name:'TGA (Thermo Gravity Analysis)',cat:'Chemical',nonNabl:5800,nabl:null,unit:'% loss vs temp',std:'ASTM E1131 / ISO 11358',specimen:'~5mg',pieces:1,specimenType:'Small piece / powder'},
+  {sr:'28',name:'Total Solid Content',cat:'Chemical',nonNabl:1650,nabl:null,unit:'%',std:'ASTM D1076',specimen:'~5g of latex/solution',pieces:1,specimenType:'Liquid sample'},
+  {sr:'30',name:'Zinc Oxide Purity / Content',cat:'Chemical',nonNabl:2500,nabl:null,unit:'%',std:'IS 281',specimen:'~2g',pieces:1,specimenType:'Powder'},
+  {sr:'31',name:'Volatile Content',cat:'Chemical',nonNabl:2250,nabl:null,unit:'%',std:'ASTM D1509',specimen:'~2g of compound',pieces:1,specimenType:'Compound piece'},
+  {sr:'59',name:'pH Value',cat:'Chemical',nonNabl:1450,nabl:null,unit:'pH units',std:'ASTM E70',specimen:'~10ml of liquid',pieces:1,specimenType:'Liquid sample'},
+  {sr:'76',name:'Asbestos Content',cat:'Chemical',nonNabl:2900,nabl:null,unit:'Presence/Absence',std:'ISO 22262',specimen:'~5g of material',pieces:1,specimenType:'Compound piece'},
+  {sr:'90',name:'Acidity',cat:'Chemical',nonNabl:1600,nabl:null,unit:'mg KOH/g',std:'ASTM D1544',specimen:'~10ml',pieces:1,specimenType:'Liquid sample'},
+  {sr:'116',name:'MBTS Purity',cat:'Chemical',nonNabl:2150,nabl:null,unit:'%',std:'IS 1361',specimen:'~2g',pieces:1,specimenType:'Powder'},
+  {sr:'129',name:'Copper Content',cat:'Chemical',nonNabl:2750,nabl:null,unit:'ppm / %',std:'ASTM D4075',specimen:'~2g',pieces:1,specimenType:'Compound piece'},
+  {sr:'130',name:'Silver Content',cat:'Chemical',nonNabl:2750,nabl:null,unit:'ppm / %',std:'ASTM',specimen:'~2g',pieces:1,specimenType:'Compound piece'},
+  {sr:'133',name:'DBP Absorption',cat:'Chemical',nonNabl:2100,nabl:null,unit:'ml/100g',std:'ASTM D2414',specimen:'~10g of carbon black',pieces:1,specimenType:'Powder'},
+  {sr:'135',name:'Heavy Metal',cat:'Chemical',nonNabl:2750,nabl:null,unit:'ppm',std:'ISO 3856',specimen:'~2g',pieces:1,specimenType:'Compound piece',remark:'Per metal'},
+  {sr:'143',name:'Iodine Absorption',cat:'Chemical',nonNabl:2100,nabl:null,unit:'mg/g',std:'ASTM D1510',specimen:'~2g of carbon black',pieces:1,specimenType:'Powder'},
+  // Physical -- rubber mech group
+  {sr:'42',name:'Tensile Strength (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group',unit:'MPa',std:'IS 3400 Pt1 / ASTM D412 / ISO 37',specimen:'Dumbbell Type 1 or Type 2',dimL:150,dimW:6,dimT:2,pieces:3,specimenType:'Dumbbell'},
+  {sr:'43',name:'Elongation at Break (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group',unit:'%',std:'IS 3400 Pt1 / ASTM D412 / ISO 37',specimen:'Dumbbell Type 1 or Type 2',dimL:150,dimW:6,dimT:2,pieces:3,specimenType:'Dumbbell'},
+  {sr:'44',name:'Modulus 100% / 200% / 300% (Rubber)',cat:'Physical',nonNabl:2100,nabl:2100,groupId:'rubber-mech',groupLabel:'Rubber Mech Group',unit:'MPa',std:'IS 3400 Pt1 / ASTM D412 / ISO 37',specimen:'Dumbbell Type 1 or Type 2',dimL:150,dimW:6,dimT:2,pieces:3,specimenType:'Dumbbell'},
+  // Physical -- plastic mech group
+  {sr:'45',name:'Tensile Strength (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group',unit:'MPa',std:'ASTM D638 / ISO 527',specimen:'Dumbbell Type I or II',dimL:165,dimW:13,dimT:3,pieces:5,specimenType:'Dumbbell'},
+  {sr:'46',name:'Elongation at Break (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group',unit:'%',std:'ASTM D638 / ISO 527',specimen:'Dumbbell Type I or II',dimL:165,dimW:13,dimT:3,pieces:5,specimenType:'Dumbbell'},
+  {sr:'47',name:'Modulus 100% / 200% / 300% (Plastic)',cat:'Physical',nonNabl:2100,nabl:null,groupId:'plastic-mech',groupLabel:'Plastic Mech Group',unit:'MPa',std:'ASTM D638 / ISO 527',specimen:'Dumbbell Type I or II',dimL:165,dimW:13,dimT:3,pieces:5,specimenType:'Dumbbell'},
+  // Physical -- rest
+  {sr:'23',name:'Rebound Resilience',cat:'Physical',nonNabl:1550,nabl:1650,unit:'%',std:'IS 3400 Pt4 / ASTM D1054 / ISO 4662',specimen:'Disc 29mm dia x 12.5mm thick',dimL:29,dimW:29,dimT:13,pieces:3,specimenType:'Disc'},
+  {sr:'25',name:'Specific Gravity / Density of Raw Material',cat:'Physical',nonNabl:1450,nabl:1450,unit:'g/cm³',std:'IS 3400 Pt12 / ASTM D297 / ISO 2781',specimen:'Any piece ~5g',dimL:25,dimW:25,dimT:3,pieces:3,specimenType:'Any piece'},
+  {sr:'26',name:'Specific Gravity / Density of Chemical Powder',cat:'Physical',nonNabl:1550,nabl:null,unit:'g/cm³',std:'ASTM D297',specimen:'~5g powder',pieces:1,specimenType:'Powder'},
+  {sr:'32',name:'Load @ 25% Deflection (RMA Value)',cat:'Physical',nonNabl:3150,nabl:3050,unit:'kg',std:'IS 3400 Pt14 / ASTM D1055',specimen:'Disc or pad as per product size',dimL:100,dimW:100,dimT:25,pieces:3,specimenType:'Disc / Pad'},
+  {sr:'35',name:'Dimensions',cat:'Physical',nonNabl:1100,nabl:null,unit:'mm',std:'IS 3400 / Product standard',specimen:'Full product or cut piece',pieces:3,specimenType:'Product piece'},
+  {sr:'36',name:'Hose Dimensions',cat:'Physical',nonNabl:1000,nabl:null,unit:'mm',std:'IS product standard',specimen:'300mm length of hose',dimL:300,dimW:50,dimT:50,pieces:1,specimenType:'Hose section'},
+  {sr:'41a',name:'Hardness — Shore A',cat:'Physical',nonNabl:650,nabl:650,unit:'Shore A',std:'IS 3400 Pt2 / ASTM D2240 / ISO 48',specimen:'Flat slab min 6mm thick, 30x30mm',dimL:30,dimW:30,dimT:6,pieces:3,specimenType:'Flat slab'},
+  {sr:'41b',name:'Hardness — Shore D',cat:'Physical',nonNabl:900,nabl:null,unit:'Shore D',std:'ASTM D2240 / ISO 48',specimen:'Flat slab min 6mm thick',dimL:30,dimW:30,dimT:6,pieces:3,specimenType:'Flat slab'},
+  {sr:'41c',name:'Hardness — IRHD',cat:'Physical',nonNabl:900,nabl:null,unit:'IRHD',std:'IS 3400 Pt2 / ISO 48',specimen:'Flat slab min 6mm thick',dimL:30,dimW:30,dimT:6,pieces:3,specimenType:'Flat slab'},
+  {sr:'41d',name:'Hardness — Micro Hardness',cat:'Physical',nonNabl:1100,nabl:null,unit:'IRHD',std:'ISO 48-4',specimen:'Small flat surface, min 1mm thick',dimL:10,dimW:10,dimT:2,pieces:3,specimenType:'Small flat piece'},
+  {sr:'48',name:'Tear Strength / Angular Tear',cat:'Physical',nonNabl:2100,nabl:2100,unit:'kN/m',std:'IS 3400 Pt3 / ASTM D624 / ISO 34',specimen:'Die C trouser shape',dimL:150,dimW:50,dimT:2,pieces:3,specimenType:'Die C (Trouser)'},
+  {sr:'49',name:'Tension Set',cat:'Physical',nonNabl:2100,nabl:2100,unit:'%',std:'IS 3400 Pt11 / ASTM D412',specimen:'Dumbbell',dimL:150,dimW:6,dimT:2,pieces:3,specimenType:'Dumbbell'},
+  {sr:'50',name:'Specific Gravity of Finished Product',cat:'Physical',nonNabl:1450,nabl:1500,unit:'g/cm³',std:'IS 3400 Pt12 / ASTM D792 / ISO 2781',specimen:'Any cut piece ~5g',dimL:25,dimW:25,dimT:3,pieces:3,specimenType:'Any piece'},
+  {sr:'51',name:'Load Recovery',cat:'Physical',nonNabl:2000,nabl:null,unit:'%',std:'IS product standard',specimen:'As per product',pieces:3,specimenType:'Product piece'},
+  {sr:'53',name:'Compressibility',cat:'Physical',nonNabl:2500,nabl:null,unit:'%',std:'ASTM F36 / ISO 6945',specimen:'Disc 30mm dia x 3mm thick',dimL:30,dimW:30,dimT:3,pieces:3,specimenType:'Disc'},
+  {sr:'54',name:'Compressive Strength',cat:'Physical',nonNabl:3050,nabl:null,unit:'MPa',std:'ASTM D575',specimen:'Cylinder or disc',dimL:25,dimW:25,dimT:25,pieces:3,specimenType:'Cylinder / Disc'},
+  {sr:'55',name:'Deflection Load',cat:'Physical',nonNabl:2500,nabl:null,unit:'N or kg',std:'Product standard',specimen:'As per product size',pieces:3,specimenType:'Product piece'},
+  {sr:'56',name:'Abrasion Index (DIN)',cat:'Physical',nonNabl:3100,nabl:3100,unit:'mm³',std:'IS 3400 Pt17 / ASTM D5963 / ISO 4649',specimen:'Cylindrical: 16mm dia x 6-10mm thick',dimL:16,dimW:16,dimT:8,pieces:2,specimenType:'Cylinder'},
+  {sr:'57',name:'Comp / Abrasion Loss',cat:'Physical',nonNabl:2600,nabl:2600,unit:'mm³ / cm³',std:'ASTM D394',specimen:'Disc or slab',dimL:50,dimW:50,dimT:10,pieces:3,specimenType:'Disc / Slab'},
+  {sr:'60',name:'Demattia Flex Testing (Cut Growth & Initiation)',cat:'Physical',nonNabl:2450,nabl:null,unit:'Kilocycles',std:'IS 3400 Pt9 / ASTM D430 / ISO 132',specimen:'Strip 150x25x6mm',dimL:150,dimW:25,dimT:6,pieces:3,specimenType:'Strip'},
+  {sr:'61',name:'Ross Flex Testing (Micro/Hawai)',cat:'Physical',nonNabl:2450,nabl:null,unit:'Kilocycles',std:'ASTM D1052',specimen:'Strip as per standard',dimL:150,dimW:25,dimT:6,pieces:3,specimenType:'Strip'},
+  {sr:'62',name:'Crack Initiation KC',cat:'Physical',nonNabl:2450,nabl:2450,unit:'Kilocycles',std:'IS 3400 Pt9 / ISO 132',specimen:'Strip 150x25x6mm',dimL:150,dimW:25,dimT:6,pieces:3,specimenType:'Strip'},
+  {sr:'63',name:'600% Cut Growth KC',cat:'Physical',nonNabl:2450,nabl:2450,unit:'Kilocycles',std:'IS 3400 Pt9 / ISO 132',specimen:'Strip 150x25x6mm',dimL:150,dimW:25,dimT:6,pieces:3,specimenType:'Strip'},
+  {sr:'64',name:'Compression Set',cat:'Physical',nonNabl:2050,nabl:2100,unit:'%',std:'IS 3400 Pt10 / ASTM D395 / ISO 815',specimen:'Cylinder 29mm dia x 12.5mm OR disc 13mm dia x 6.3mm',dimL:29,dimW:29,dimT:13,pieces:3,specimenType:'Cylinder'},
+  {sr:'65',name:'Load Deflection Upto 50 KGS',cat:'Physical',nonNabl:2500,nabl:null,unit:'N',std:'IS product standard',specimen:'Product as supplied',pieces:3,specimenType:'Product'},
+  {sr:'66',name:'Load Deflection Beyond 50 KGS',cat:'Physical',nonNabl:2750,nabl:null,unit:'N',std:'IS product standard',specimen:'Product as supplied',pieces:3,specimenType:'Product'},
+  {sr:'67',name:'Split Tear (Micro/Hawai)',cat:'Physical',nonNabl:2000,nabl:null,unit:'N/mm',std:'ASTM D470',specimen:'Strip',dimL:100,dimW:25,dimT:3,pieces:3,specimenType:'Strip'},
+  {sr:'68',name:'Shrinkage (Micro/Hawai)',cat:'Physical',nonNabl:1650,nabl:null,unit:'%',std:'Product standard',specimen:'Strip 150x25x3mm',dimL:150,dimW:25,dimT:3,pieces:3,specimenType:'Strip'},
+  {sr:'72',name:'Bond Strength / Adhesion Strength',cat:'Physical',nonNabl:2750,nabl:3050,unit:'N/mm or kN/m',std:'IS 3400 Pt15 / ASTM D429 / ISO 813',specimen:'Bonded specimen as per product',dimL:100,dimW:25,dimT:6,pieces:3,specimenType:'Bonded piece'},
+  {sr:'73',name:'Bond Strength — Rubber to Metal',cat:'Physical',nonNabl:2750,nabl:3050,unit:'N/mm',std:'IS 3400 Pt15 / ASTM D429 / ISO 813',specimen:'Rubber-metal bonded assembly',dimL:100,dimW:25,dimT:6,pieces:3,specimenType:'Bonded assembly'},
+  {sr:'77',name:'Shear Strength (Dry)',cat:'Physical',nonNabl:2500,nabl:null,unit:'MPa',std:'ASTM D1002',specimen:'Lap-shear bonded assembly',dimL:100,dimW:25,dimT:3,pieces:5,specimenType:'Bonded assembly'},
+  {sr:'78',name:'Shear Strength (Wet)',cat:'Physical',nonNabl:2600,nabl:null,unit:'MPa',std:'ASTM D1002',specimen:'Lap-shear bonded assembly',dimL:100,dimW:25,dimT:3,pieces:5,specimenType:'Bonded assembly'},
+  {sr:'99',name:'Damping Co-efficient',cat:'Physical',nonNabl:3200,nabl:null,unit:'Ratio',std:'IS product standard',specimen:'As per product',pieces:3,specimenType:'Product piece'},
+  {sr:'101',name:'Izod Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null,unit:'J/m',std:'ASTM D256 / ISO 180',specimen:'Notched bar 63.5x12.7x3.2mm',dimL:64,dimW:13,dimT:4,pieces:5,specimenType:'Notched bar'},
+  {sr:'102',name:'Charpy Impact at R.T.',cat:'Physical',nonNabl:2500,nabl:null,unit:'kJ/m²',std:'ASTM D6110 / ISO 179',specimen:'Bar 80x10x4mm',dimL:80,dimW:10,dimT:4,pieces:5,specimenType:'Bar'},
+  {sr:'105',name:'Goodrich Heat Built Up',cat:'Physical',nonNabl:2900,nabl:null,unit:'°C rise',std:'ASTM D623',specimen:'Cylinder 17.8mm dia x 25.4mm',dimL:18,dimW:18,dimT:26,pieces:3,specimenType:'Cylinder'},
+  {sr:'107',name:'Thickness',cat:'Physical',nonNabl:700,nabl:null,unit:'mm',std:'IS 3400 / ASTM D374',specimen:'Sheet / product as supplied',pieces:3,specimenType:'Sheet piece'},
+  {sr:'108',name:'Shrinkage',cat:'Physical',nonNabl:1400,nabl:null,unit:'%',std:'Product standard',specimen:'Strip 150x25x3mm',dimL:150,dimW:25,dimT:3,pieces:3,specimenType:'Strip'},
+  {sr:'114',name:'Burst Pressure',cat:'Physical',nonNabl:3150,nabl:null,unit:'MPa / Bar',std:'IS product standard',specimen:'Hose / tube as supplied',pieces:3,specimenType:'Hose / Tube'},
+  {sr:'119',name:'Flexural Strength',cat:'Physical',nonNabl:3150,nabl:null,unit:'MPa',std:'ASTM D790 / ISO 178',specimen:'Bar 80x13x4mm',dimL:80,dimW:13,dimT:4,pieces:5,specimenType:'Bar'},
+  {sr:'120',name:'Impact Strength',cat:'Physical',nonNabl:1950,nabl:null,unit:'J/m or kJ/m²',std:'ASTM D256 / ISO 179',specimen:'Notched bar 63.5x12.7x3.2mm',dimL:64,dimW:13,dimT:4,pieces:5,specimenType:'Notched bar'},
+  {sr:'121',name:'Vicat Softening Temp',cat:'Physical',nonNabl:2500,nabl:null,unit:'°C',std:'ASTM D1525 / ISO 306',specimen:'Square slab 10x10x4mm',dimL:10,dimW:10,dimT:4,pieces:3,specimenType:'Flat slab'},
+  {sr:'123',name:'Leakage Test',cat:'Physical',nonNabl:2050,nabl:null,unit:'Pass / Fail',std:'Product standard',specimen:'Product as supplied',pieces:3,specimenType:'Product'},
   // Rheology
-  {sr:'33',name:'Crystallisation Melting Point',cat:'Rheology',nonNabl:1800,nabl:null},
-  {sr:'37',name:'Mooney Scorch',cat:'Rheology',nonNabl:2200,nabl:null},
-  {sr:'38',name:'Mooney Viscosity',cat:'Rheology',nonNabl:2200,nabl:null},
-  {sr:'40a',name:'Rheometer Study — Upto 60 Minutes',cat:'Rheology',nonNabl:1600,nabl:null},
-  {sr:'40b',name:'Rheometer Study — Beyond 60 Minutes',cat:'Rheology',nonNabl:1900,nabl:null},
+  {sr:'33',name:'Crystallisation Melting Point',cat:'Rheology',nonNabl:1800,nabl:null,unit:'°C',std:'ASTM D3418 / ISO 11357',specimen:'~5mg pellet',pieces:1,specimenType:'Pellet / piece'},
+  {sr:'37',name:'Mooney Scorch',cat:'Rheology',nonNabl:2200,nabl:null,unit:'Minutes',std:'IS 3400 Pt7 / ASTM D1646 / ISO 289',specimen:'~25g unvulcanised compound',pieces:1,specimenType:'Unvulcanised compound'},
+  {sr:'38',name:'Mooney Viscosity',cat:'Rheology',nonNabl:2200,nabl:null,unit:'MU',std:'IS 3400 Pt7 / ASTM D1646 / ISO 289',specimen:'~25g unvulcanised compound',pieces:1,specimenType:'Unvulcanised compound'},
+  {sr:'40a',name:'Rheometer Study — Upto 60 Minutes',cat:'Rheology',nonNabl:1600,nabl:null,unit:'dNm',std:'IS 3400 Pt8 / ASTM D5289 / ISO 6502',specimen:'~5g unvulcanised compound',pieces:1,specimenType:'Unvulcanised compound'},
+  {sr:'40b',name:'Rheometer Study — Beyond 60 Minutes',cat:'Rheology',nonNabl:1900,nabl:null,unit:'dNm',std:'IS 3400 Pt8 / ASTM D5289 / ISO 6502',specimen:'~5g unvulcanised compound',pieces:1,specimenType:'Unvulcanised compound'},
   // Oil & Swelling
-  {sr:'69base',name:'Oil Swelling / Acid Resistance — Base Charge',cat:'Oil & Swelling',nonNabl:1500,nabl:1550},
-  {sr:'69a',name:'ASTM Oil No. 1/2/3 — Swelling',cat:'Oil & Swelling',nonNabl:1900,nabl:2000},
-  {sr:'69a2',name:'ASTM Oil No. 1/2/3 — Tensile / EB',cat:'Oil & Swelling',nonNabl:2600,nabl:2750},
-  {sr:'69b',name:'Oil/Swelling — Acid / Alkali',cat:'Oil & Swelling',nonNabl:1150,nabl:700},
-  {sr:'69c',name:'Oil/Swelling — Diesel / Petrol / Kerosene',cat:'Oil & Swelling',nonNabl:1000,nabl:900},
-  {sr:'69d',name:'Oil/Swelling — Distilled Water',cat:'Oil & Swelling',nonNabl:750,nabl:650},
-  {sr:'69e',name:'Oil/Swelling — Sea Water',cat:'Oil & Swelling',nonNabl:1000,nabl:1000},
-  {sr:'142',name:'Water Absorption (Swelling + Water Charge)',cat:'Oil & Swelling',nonNabl:2100,nabl:null},
+  {sr:'69base',name:'Oil Swelling / Acid Resistance — Base Charge',cat:'Oil & Swelling',nonNabl:1500,nabl:1550,unit:'%',std:'IS 3400 Pt6 / ASTM D471 / ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'69a',name:'ASTM Oil No. 1/2/3 — Swelling',cat:'Oil & Swelling',nonNabl:1900,nabl:2000,unit:'%',std:'ASTM D471 / ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'69a2',name:'ASTM Oil No. 1/2/3 — Tensile / EB',cat:'Oil & Swelling',nonNabl:2600,nabl:2750,unit:'% change',std:'ASTM D471',specimen:'Dumbbell Type 2',dimL:150,dimW:6,dimT:2,pieces:3,specimenType:'Dumbbell'},
+  {sr:'69b',name:'Oil/Swelling — Acid / Alkali',cat:'Oil & Swelling',nonNabl:1150,nabl:700,unit:'% change',std:'IS 3400 Pt6 / ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'69c',name:'Oil/Swelling — Diesel / Petrol / Kerosene',cat:'Oil & Swelling',nonNabl:1000,nabl:900,unit:'% change',std:'IS 3400 Pt6 / ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'69d',name:'Oil/Swelling — Distilled Water',cat:'Oil & Swelling',nonNabl:750,nabl:650,unit:'% change',std:'IS 3400 Pt6 / ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'69e',name:'Oil/Swelling — Sea Water',cat:'Oil & Swelling',nonNabl:1000,nabl:1000,unit:'% change',std:'ISO 1817',specimen:'Strip 25x25x2mm',dimL:25,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'142',name:'Water Absorption (Swelling + Water Charge)',cat:'Oil & Swelling',nonNabl:2100,nabl:null,unit:'% change',std:'ASTM D570 / ISO 62',specimen:'Disc 50mm dia x 3mm',dimL:50,dimW:50,dimT:3,pieces:3,specimenType:'Disc'},
   // Electrical
-  {sr:'92a',name:'Di-electric Strength — Upto 20 KV',cat:'Electrical',nonNabl:2600,nabl:null},
-  {sr:'92b',name:'Di-electric Strength — Upto 40 KV',cat:'Electrical',nonNabl:3300,nabl:null},
-  {sr:'93',name:'Breakdown Voltage',cat:'Electrical',nonNabl:2600,nabl:null},
-  {sr:'94',name:'Surface / Volume Resistivity',cat:'Electrical',nonNabl:2500,nabl:null},
-  {sr:'112',name:'Arc Resistance',cat:'Electrical',nonNabl:3550,nabl:null},
+  {sr:'92a',name:'Di-electric Strength — Upto 20 KV',cat:'Electrical',nonNabl:2600,nabl:null,unit:'kV/mm',std:'IS 1816 / ASTM D149 / IEC 60243',specimen:'Sheet 100x100x2mm min',dimL:100,dimW:100,dimT:2,pieces:3,specimenType:'Sheet'},
+  {sr:'92b',name:'Di-electric Strength — Upto 40 KV',cat:'Electrical',nonNabl:3300,nabl:null,unit:'kV/mm',std:'IS 1816 / ASTM D149 / IEC 60243',specimen:'Sheet 100x100x3mm min',dimL:100,dimW:100,dimT:3,pieces:3,specimenType:'Sheet'},
+  {sr:'93',name:'Breakdown Voltage',cat:'Electrical',nonNabl:2600,nabl:null,unit:'kV',std:'IEC 60243 / ASTM D149',specimen:'Sheet 100x100x2mm',dimL:100,dimW:100,dimT:2,pieces:3,specimenType:'Sheet'},
+  {sr:'94',name:'Surface / Volume Resistivity',cat:'Electrical',nonNabl:2500,nabl:null,unit:'Ohm / Ohm-cm',std:'ASTM D257 / IEC 62631',specimen:'Disc or sheet 100x100x2mm',dimL:100,dimW:100,dimT:2,pieces:3,specimenType:'Sheet / Disc'},
+  {sr:'112',name:'Arc Resistance',cat:'Electrical',nonNabl:3550,nabl:null,unit:'Seconds',std:'ASTM D495',specimen:'Sheet 100x100x3mm',dimL:100,dimW:100,dimT:3,pieces:5,specimenType:'Sheet'},
   // Low Temperature
-  {sr:'95a',name:'Low Temp Flexibility — Upto -20°C / 24 hrs',cat:'Low Temperature',nonNabl:3100,nabl:3300},
-  {sr:'95b',name:'Low Temp Flexibility — Upto -40°C / 24 hrs',cat:'Low Temperature',nonNabl:3850,nabl:4000},
-  {sr:'95c',name:'Low Temp Flexibility — Upto -70°C / 24 hrs',cat:'Low Temperature',nonNabl:4500,nabl:4950},
-  {sr:'96',name:'TR 10 (Retraction by 10%)',cat:'Low Temperature',nonNabl:3900,nabl:4000},
-  {sr:'97',name:'Low Temp Brittleness',cat:'Low Temperature',nonNabl:4950,nabl:5250},
+  {sr:'95a',name:'Low Temp Flexibility — Upto -20°C / 24 hrs',cat:'Low Temperature',nonNabl:3100,nabl:3300,unit:'Pass / Fail',std:'IS 3400 Pt16 / ASTM D1053 / ISO 1432',specimen:'Strip 150x25x2mm',dimL:150,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'95b',name:'Low Temp Flexibility — Upto -40°C / 24 hrs',cat:'Low Temperature',nonNabl:3850,nabl:4000,unit:'Pass / Fail',std:'IS 3400 Pt16 / ASTM D1053 / ISO 1432',specimen:'Strip 150x25x2mm',dimL:150,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'95c',name:'Low Temp Flexibility — Upto -70°C / 24 hrs',cat:'Low Temperature',nonNabl:4500,nabl:4950,unit:'Pass / Fail',std:'IS 3400 Pt16 / ASTM D1053 / ISO 1432',specimen:'Strip 150x25x2mm',dimL:150,dimW:25,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'96',name:'TR 10 (Retraction by 10%)',cat:'Low Temperature',nonNabl:3900,nabl:4000,unit:'°C',std:'IS 3400 Pt19 / ASTM D1329 / ISO 2921',specimen:'Strip 150x4x2mm',dimL:150,dimW:4,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'97',name:'Low Temp Brittleness',cat:'Low Temperature',nonNabl:4950,nabl:5250,unit:'°C',std:'IS 3400 Pt16 / ASTM D746 / ISO 812',specimen:'Strip 50x6x2mm',dimL:50,dimW:6,dimT:2,pieces:10,specimenType:'Strip'},
   // Ozone
-  {sr:'91a',name:'Ozone Resistance — 25 PPHM / 48 hrs',cat:'Ozone',nonNabl:6600,nabl:null,remark:'60% for 2nd sample onwards'},
-  {sr:'91b',name:'Ozone Resistance — 50 PPHM / 48 hrs',cat:'Ozone',nonNabl:6000,nabl:6000},
-  {sr:'91c',name:'Ozone Resistance — 100 PPHM / 48 hrs',cat:'Ozone',nonNabl:8500,nabl:8650},
-  {sr:'91d',name:'Ozone Resistance — 200 PPHM / 48 hrs',cat:'Ozone',nonNabl:10150,nabl:10300},
+  {sr:'91a',name:'Ozone Resistance — 25 PPHM / 48 hrs',cat:'Ozone',nonNabl:6600,nabl:null,unit:'Pass / Fail',std:'IS 3400 Pt20 / ASTM D1171 / ISO 1431',specimen:'Strip 150x10x2mm under 20% strain',dimL:150,dimW:10,dimT:2,pieces:3,specimenType:'Strip',remark:'60% for 2nd sample onwards'},
+  {sr:'91b',name:'Ozone Resistance — 50 PPHM / 48 hrs',cat:'Ozone',nonNabl:6000,nabl:6000,unit:'Pass / Fail',std:'IS 3400 Pt20 / ASTM D1171 / ISO 1431',specimen:'Strip 150x10x2mm under 20% strain',dimL:150,dimW:10,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'91c',name:'Ozone Resistance — 100 PPHM / 48 hrs',cat:'Ozone',nonNabl:8500,nabl:8650,unit:'Pass / Fail',std:'IS 3400 Pt20 / ISO 1431',specimen:'Strip 150x10x2mm under 20% strain',dimL:150,dimW:10,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'91d',name:'Ozone Resistance — 200 PPHM / 48 hrs',cat:'Ozone',nonNabl:10150,nabl:10300,unit:'Pass / Fail',std:'ISO 1431',specimen:'Strip 150x10x2mm under 20% strain',dimL:150,dimW:10,dimT:2,pieces:3,specimenType:'Strip'},
   // Misc
-  {sr:'24',name:'Heat Loss',cat:'Miscellaneous',nonNabl:2300,nabl:null},
-  {sr:'34',name:'Colour (Visual)',cat:'Miscellaneous',nonNabl:700,nabl:null},
-  {sr:'39',name:'Moulding of Test Specimen',cat:'Miscellaneous',nonNabl:950,nabl:1000},
-  {sr:'58',name:'CFR 21 Testing',cat:'Miscellaneous',nonNabl:9900,nabl:null},
-  {sr:'71',name:'Circumferential Swell Test',cat:'Miscellaneous',nonNabl:3650,nabl:null},
-  {sr:'75',name:'Corrosion of Metal (per day)',cat:'Miscellaneous',nonNabl:2750,nabl:null},
-  {sr:'79',name:'Weight in GSM',cat:'Miscellaneous',nonNabl:1350,nabl:null},
-  {sr:'81',name:'Odour',cat:'Miscellaneous',nonNabl:1250,nabl:null},
-  {sr:'84',name:'Fire Resistance',cat:'Miscellaneous',nonNabl:2650,nabl:null},
-  {sr:'85',name:'Kinematic Viscosity @ 40°C',cat:'Miscellaneous',nonNabl:1600,nabl:null},
-  {sr:'86',name:'Kinematic Viscosity @ 100°C',cat:'Miscellaneous',nonNabl:1800,nabl:null},
-  {sr:'87',name:'Pour Point',cat:'Miscellaneous',nonNabl:2450,nabl:null},
-  {sr:'88',name:'Flash Point (COC)',cat:'Miscellaneous',nonNabl:1800,nabl:null},
-  {sr:'89',name:'Aniline Point',cat:'Miscellaneous',nonNabl:1850,nabl:null},
-  {sr:'100',name:'Blooming Identification',cat:'Miscellaneous',nonNabl:3800,nabl:4200},
-  {sr:'106',name:'Staining Test',cat:'Miscellaneous',nonNabl:2500,nabl:null},
-  {sr:'110',name:'Auto Ignition Temp',cat:'Miscellaneous',nonNabl:1950,nabl:null},
-  {sr:'111',name:'Setting Time',cat:'Miscellaneous',nonNabl:1650,nabl:null},
-  {sr:'113',name:'Salt Spray — 1 Day',cat:'Miscellaneous',nonNabl:6600,nabl:null,remark:'2nd sample at 60%'},
-  {sr:'118',name:'Co-efficient of Linear Expansion',cat:'Miscellaneous',nonNabl:1350,nabl:null},
-  {sr:'122',name:'Softening Point',cat:'Miscellaneous',nonNabl:1650,nabl:null},
-  {sr:'124',name:'Light Transmittance',cat:'Miscellaneous',nonNabl:1550,nabl:null},
+  {sr:'24',name:'Heat Loss',cat:'Miscellaneous',nonNabl:2300,nabl:null,unit:'%',std:'ASTM D1509',specimen:'~5g of material',pieces:1,specimenType:'Compound piece'},
+  {sr:'34',name:'Colour (Visual)',cat:'Miscellaneous',nonNabl:700,nabl:null,unit:'Visual',std:'Visual inspection',specimen:'Product as supplied',pieces:1,specimenType:'Product'},
+  {sr:'39',name:'Moulding of Test Specimen',cat:'Miscellaneous',nonNabl:950,nabl:1000,unit:'N/A',std:'IS 3400 / ASTM',specimen:'Unvulcanised compound slab ~150x150x6mm',dimL:150,dimW:150,dimT:6,pieces:1,specimenType:'Unvulcanised compound'},
+  {sr:'58',name:'CFR 21 Testing',cat:'Miscellaneous',nonNabl:9900,nabl:null,unit:'Pass / Fail',std:'CFR 21 (FDA)',specimen:'As per test protocol',pieces:3,specimenType:'Product piece'},
+  {sr:'71',name:'Circumferential Swell Test',cat:'Miscellaneous',nonNabl:3650,nabl:null,unit:'% change',std:'Product standard',specimen:'Ring specimen as per product',pieces:3,specimenType:'Ring'},
+  {sr:'75',name:'Corrosion of Metal (per day)',cat:'Miscellaneous',nonNabl:2750,nabl:null,unit:'mg/cm²',std:'ASTM D1428',specimen:'Metal + rubber contact piece',pieces:3,specimenType:'Contact assembly'},
+  {sr:'79',name:'Weight in GSM',cat:'Miscellaneous',nonNabl:1350,nabl:null,unit:'g/m²',std:'IS 1964',specimen:'100x100mm sheet',dimL:100,dimW:100,dimT:2,pieces:3,specimenType:'Sheet'},
+  {sr:'81',name:'Odour',cat:'Miscellaneous',nonNabl:1250,nabl:null,unit:'Qualitative',std:'Sensory test',specimen:'~10g of material',pieces:1,specimenType:'Compound piece'},
+  {sr:'84',name:'Fire Resistance',cat:'Miscellaneous',nonNabl:2650,nabl:null,unit:'Seconds',std:'ASTM D635 / ISO 10351',specimen:'Strip 125x13x3mm',dimL:125,dimW:13,dimT:3,pieces:5,specimenType:'Strip'},
+  {sr:'85',name:'Kinematic Viscosity @ 40°C',cat:'Miscellaneous',nonNabl:1600,nabl:null,unit:'cSt',std:'ASTM D445 / ISO 3104',specimen:'~30ml oil sample',pieces:1,specimenType:'Liquid sample'},
+  {sr:'86',name:'Kinematic Viscosity @ 100°C',cat:'Miscellaneous',nonNabl:1800,nabl:null,unit:'cSt',std:'ASTM D445 / ISO 3104',specimen:'~30ml oil sample',pieces:1,specimenType:'Liquid sample'},
+  {sr:'87',name:'Pour Point',cat:'Miscellaneous',nonNabl:2450,nabl:null,unit:'°C',std:'ASTM D97 / ISO 3016',specimen:'~50ml oil sample',pieces:1,specimenType:'Liquid sample'},
+  {sr:'88',name:'Flash Point (COC)',cat:'Miscellaneous',nonNabl:1800,nabl:null,unit:'°C',std:'ASTM D92 / ISO 2592',specimen:'~70ml oil sample',pieces:1,specimenType:'Liquid sample'},
+  {sr:'89',name:'Aniline Point',cat:'Miscellaneous',nonNabl:1850,nabl:null,unit:'°C',std:'ASTM D611 / ISO 2977',specimen:'~20ml oil sample',pieces:1,specimenType:'Liquid sample'},
+  {sr:'100',name:'Blooming Identification',cat:'Miscellaneous',nonNabl:3800,nabl:4200,unit:'Visual / FTIR',std:'ASTM D297',specimen:'Aged product surface sample',dimL:50,dimW:50,dimT:3,pieces:2,specimenType:'Product surface piece'},
+  {sr:'106',name:'Staining Test',cat:'Miscellaneous',nonNabl:2500,nabl:null,unit:'Stain grade',std:'ISO 3865',specimen:'Strip 50x50x2mm',dimL:50,dimW:50,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'110',name:'Auto Ignition Temp',cat:'Miscellaneous',nonNabl:1950,nabl:null,unit:'°C',std:'ASTM E659',specimen:'~1g',pieces:1,specimenType:'Small piece'},
+  {sr:'111',name:'Setting Time',cat:'Miscellaneous',nonNabl:1650,nabl:null,unit:'Minutes',std:'Product standard',specimen:'~50g adhesive / compound',pieces:1,specimenType:'Liquid / paste'},
+  {sr:'113',name:'Salt Spray — 1 Day',cat:'Miscellaneous',nonNabl:6600,nabl:null,unit:'Hours',std:'ASTM B117 / ISO 9227',specimen:'Panel or product 100x100mm',dimL:100,dimW:100,dimT:3,pieces:3,specimenType:'Panel / Product',remark:'2nd sample at 60%'},
+  {sr:'118',name:'Co-efficient of Linear Expansion',cat:'Miscellaneous',nonNabl:1350,nabl:null,unit:'/°C',std:'ASTM D696',specimen:'Strip 50x5x2mm',dimL:50,dimW:5,dimT:2,pieces:3,specimenType:'Strip'},
+  {sr:'122',name:'Softening Point',cat:'Miscellaneous',nonNabl:1650,nabl:null,unit:'°C',std:'ASTM E28',specimen:'~5g of material',pieces:1,specimenType:'Small piece'},
+  {sr:'124',name:'Light Transmittance',cat:'Miscellaneous',nonNabl:1550,nabl:null,unit:'%',std:'ASTM D1003 / ISO 13468',specimen:'Sheet 50x50x2mm clear',dimL:50,dimW:50,dimT:2,pieces:3,specimenType:'Clear sheet'},
 ];
 
 // Group definitions: all tests in same groupId -> billed as one charge × qty
@@ -692,7 +720,7 @@ function genId(p,a){return p+'-'+new Date().getFullYear()+'-'+String(a.length+1)
 function getRate(t,nabl){return nabl==='nabl'&&t.nabl!=null?t.nabl:t.nonNabl;}
 
 // -- NAVIGATION ---------------------------------------------------------
-const PAGES=['dashboard','samples','quotations','reports','clients','pricelist','invoices'];
+const PAGES=['dashboard','samples','quotations','reports','clients','pricelist','invoices','sampreq'];
 function showPage(p){
   PAGES.forEach(x=>document.getElementById('page-'+x).classList.toggle('hidden',x!==p));
   document.querySelectorAll('.nav-item').forEach(el=>{el.classList.remove('active');if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes("'"+p+"'"))el.classList.add('active');});
@@ -703,6 +731,7 @@ function showPage(p){
   if(p==='clients')renderClients();
   if(p==='pricelist')renderPriceList();
   if(p==='invoices')renderInvoices();
+  if(p==='sampreq')initSampleReq();
 }
 
 // -- MODALS -------------------------------------------------------------
@@ -1560,6 +1589,248 @@ function renderClients(){
 // -- PRICE LIST ---------------------------------------------------------
 // renderPriceList moved to price list edit section above
 
+// -- SAMPLE REQUIREMENTS CALCULATOR ------------------------------------
+let srSelected = new Set(); // set of sr values selected
+
+function initSampleReq(){
+  buildSRSelector();
+  calcSampleReq();
+}
+
+function buildSRSelector(filter){
+  const cats = [...new Set(PRICE_DATA.map(t=>t.cat))];
+  const f = (filter||'').toLowerCase();
+  const shownGroups = new Set();
+  let html = '';
+  cats.forEach(cat=>{
+    const tests = PRICE_DATA.filter(t=>t.cat===cat && (!f || t.name.toLowerCase().includes(f) || t.cat.toLowerCase().includes(f)));
+    if(!tests.length) return;
+    html += `<div class="test-category"><div class="test-cat-header">${cat}</div><div class="test-check-grid">`;
+    tests.forEach(t=>{
+      if(t.groupId){
+        if(shownGroups.has(t.groupId)) return;
+        shownGroups.add(t.groupId);
+        const g = GROUPS[t.groupId];
+        html += `<label class="test-check-item" style="grid-column:span 2">
+          <input type="checkbox" class="sr-cb" data-sr="${t.groupId}" ${srSelected.has(t.groupId)?'checked':''} onchange="toggleSR(this)" style="width:13px;height:13px;accent-color:var(--teal)">
+          ${g.label} <span class="group-badge">GROUP</span>
+        </label>`;
+      } else {
+        html += `<label class="test-check-item">
+          <input type="checkbox" class="sr-cb" data-sr="${t.sr}" ${srSelected.has(t.sr)?'checked':''} onchange="toggleSR(this)" style="width:13px;height:13px;accent-color:var(--teal)">
+          ${t.name}
+        </label>`;
+      }
+    });
+    html += '</div></div>';
+  });
+  document.getElementById('sr-test-selector').innerHTML = html || '<div style="padding:12px;color:var(--text3)">No tests found.</div>';
+}
+
+function filterSRTests(){
+  const q = document.getElementById('sr-search').value;
+  buildSRSelector(q);
+}
+
+function toggleSR(cb){
+  if(cb.checked) srSelected.add(cb.dataset.sr);
+  else srSelected.delete(cb.dataset.sr);
+  calcSampleReq();
+}
+
+function clearSRSelection(){
+  srSelected.clear();
+  buildSRSelector();
+  calcSampleReq();
+}
+
+function getSRTestData(sr){
+  // handle group ID
+  if(GROUPS[sr]){
+    // return representative test from the group (first one with dimL)
+    const t = PRICE_DATA.find(p=>p.groupId===sr && p.dimL);
+    return t || PRICE_DATA.find(p=>p.groupId===sr);
+  }
+  return PRICE_DATA.find(p=>p.sr===sr);
+}
+
+function calcSampleReq(){
+  const numSamples = parseInt(document.getElementById('sr-samples')?.value)||1;
+  const res = document.getElementById('sr-results');
+  if(!srSelected.size){
+    res.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:24px;text-align:center">Select tests on the left to see requirements</div>';
+    return;
+  }
+
+  // Build per-test table rows
+  // Track all pieces for slab estimate
+  // Categorise: dumbbell pieces, strip pieces, disc pieces, slab pieces, other
+  let rows = '';
+  let slabPieces = []; // {w, l, t, type, test}
+  let totalDumbbells = 0, totalStrips = 0, totalDiscs = 0, totalCylinders = 0, totalSheets = 0;
+  let hasNoSlab = []; // tests needing product-form specimens
+
+  srSelected.forEach(sr=>{
+    const t = getSRTestData(sr);
+    if(!t) return;
+    const displayName = GROUPS[sr] ? GROUPS[sr].label : t.name;
+    const pieces = (t.pieces||1) * numSamples;
+    const hasSpec = t.dimL && t.dimW && t.dimT;
+    const specDesc = hasSpec ? `${t.dimL} x ${t.dimW} x ${t.dimT} mm` : (t.specimen||'As per product');
+    const stypeLabel = t.specimenType || 'See notes';
+    const stdLabel = t.std || '—';
+    const unitLabel = t.unit || '—';
+
+    rows += `<tr>
+      <td class="strong" style="font-size:12px">${displayName}</td>
+      <td style="font-size:11px;color:var(--text3)">${stdLabel}</td>
+      <td style="font-size:11px">${unitLabel}</td>
+      <td><span class="badge badge-blue" style="font-size:10px">${stypeLabel}</span></td>
+      <td style="font-size:12px;font-family:var(--mono)">${hasSpec?specDesc:t.specimen||'—'}</td>
+      <td style="font-family:var(--mono);font-size:12px;color:var(--teal);text-align:center">${pieces}</td>
+    </tr>`;
+
+    // accumulate for slab estimate
+    if(hasSpec){
+      const stype = (t.specimenType||'').toLowerCase();
+      if(stype.includes('dumbbell')) totalDumbbells += pieces;
+      else if(stype.includes('strip')) totalStrips += pieces;
+      else if(stype.includes('disc')) totalDiscs += pieces;
+      else if(stype.includes('cylinder')) totalCylinders += pieces;
+      else if(stype.includes('sheet') || stype.includes('slab') || stype.includes('flat')) totalSheets += pieces;
+      slabPieces.push({l:t.dimL, w:t.dimW, t:t.dimT, type:t.specimenType, name:displayName, count:pieces});
+    } else {
+      hasNoSlab.push(displayName);
+    }
+  });
+
+  // Slab estimate logic
+  // Dumbbell: ~150x25mm cutting area each (with clearance)
+  // Strip: actual dimL x dimW + clearance
+  // Disc/cylinder: diameter + clearance
+  // Use a simple row-packing estimate: assume 200mm wide slab, pack pieces in rows
+  let slabEstL = 0, slabEstW = 0, minThickness = 999;
+  const CLEARANCE = 5; // mm between pieces
+  
+  if(totalDumbbells > 0){
+    // Dumbbell Type 1: 150x25mm, arrange in rows of 200mm wide slab
+    const dbPerRow = Math.floor(200 / (25 + CLEARANCE)); // ~6 per row
+    const rows_db = Math.ceil(totalDumbbells / dbPerRow);
+    slabEstL = Math.max(slabEstL, rows_db * (150 + CLEARANCE));
+    slabEstW = Math.max(slabEstW, 200);
+    minThickness = Math.min(minThickness, 2);
+  }
+  if(totalStrips > 0){
+    const sp = slabPieces.filter(p=>(p.type||'').toLowerCase().includes('strip'));
+    if(sp.length){
+      const maxL = Math.max(...sp.map(p=>p.l));
+      const maxW = Math.max(...sp.map(p=>p.w));
+      const perRow = Math.floor(220 / (maxW + CLEARANCE));
+      const rowCount = Math.ceil(totalStrips / Math.max(1, perRow));
+      slabEstL = Math.max(slabEstL, rowCount * (maxL + CLEARANCE));
+      slabEstW = Math.max(slabEstW, 220);
+      minThickness = Math.min(minThickness, 2);
+    }
+  }
+  if(totalDiscs > 0){
+    const dp = slabPieces.filter(p=>(p.type||'').toLowerCase().includes('disc'));
+    if(dp.length){
+      const maxD = Math.max(...dp.map(p=>Math.max(p.l,p.w)));
+      const perRow = Math.floor(200 / (maxD + CLEARANCE));
+      const rowCount = Math.ceil(totalDiscs / Math.max(1, perRow));
+      slabEstL = Math.max(slabEstL, rowCount * (maxD + CLEARANCE));
+      slabEstW = Math.max(slabEstW, 200);
+      minThickness = Math.min(minThickness, slabPieces.find(p=>(p.type||'').toLowerCase().includes('disc'))?.t||6);
+    }
+  }
+  const maxT = slabPieces.length ? Math.max(...slabPieces.map(p=>p.t)) : 0;
+  const reqThickness = maxT || 2;
+  if(minThickness===999) minThickness = reqThickness;
+
+  // Pad slab estimates with 20% buffer
+  const finalL = slabEstL > 0 ? Math.ceil(slabEstL * 1.2 / 10) * 10 : null;
+  const finalW = slabEstW > 0 ? Math.ceil(slabEstW * 1.2 / 10) * 10 : null;
+
+  const slabHtml = (finalL && finalW) ? `
+    <div style="background:var(--bg3);border-radius:10px;padding:16px;margin-top:16px;border:1px solid var(--border2)">
+      <div style="font-size:11px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Recommended Slab / Sheet Size</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+        <div style="background:var(--bg2);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--teal)">${finalL}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Length (mm)</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--teal)">${finalW}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Width (mm)</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:7px;padding:10px;text-align:center">
+          <div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--teal)">${reqThickness}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Min thickness (mm)</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.6">
+        Includes 20% buffer. Thickness = thickest specimen required.
+        ${totalDumbbells>0?`<br>Dumbbells required: <strong style="color:var(--text)">${totalDumbbells}</strong>`:''}
+        ${totalStrips>0?`<br>Strips required: <strong style="color:var(--text)">${totalStrips}</strong>`:''}
+        ${totalDiscs>0?`<br>Discs required: <strong style="color:var(--text)">${totalDiscs}</strong>`:''}
+        ${totalCylinders>0?`<br>Cylinders required: <strong style="color:var(--text)">${totalCylinders}</strong>`:''}
+        ${hasNoSlab.length>0?`<br><span style="color:var(--amber)">Note: The following tests require product-form specimens (not cut from slab):<br>${hasNoSlab.join(', ')}</span>`:''}
+      </div>
+    </div>` : `<div style="font-size:11px;color:var(--text3);margin-top:12px">Selected tests require product-form or liquid specimens — no slab estimate applicable.</div>`;
+
+  res.innerHTML = `
+    <div class="table-wrap" style="margin-bottom:4px">
+      <table>
+        <thead><tr>
+          <th>Test</th><th>Standard</th><th>Unit</th><th>Specimen type</th><th>Dimensions / form</th>
+          <th style="text-align:center">Pieces (x${numSamples})</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${slabHtml}`;
+}
+
+function printSampleReq(){
+  const numSamples = parseInt(document.getElementById('sr-samples')?.value)||1;
+  if(!srSelected.size){ alert('Select at least one test first.'); return; }
+  const w = window.open('','_blank');
+  const tableRows = [];
+  srSelected.forEach(sr=>{
+    const t = getSRTestData(sr);
+    if(!t) return;
+    const displayName = GROUPS[sr] ? GROUPS[sr].label : t.name;
+    const pieces = (t.pieces||1)*numSamples;
+    const hasSpec = t.dimL && t.dimW && t.dimT;
+    tableRows.push(`<tr>
+      <td>${displayName}</td>
+      <td>${t.std||'—'}</td>
+      <td>${t.specimenType||'—'}</td>
+      <td>${hasSpec?t.dimL+'x'+t.dimW+'x'+t.dimT+' mm':(t.specimen||'As per product')}</td>
+      <td style="text-align:center">${pieces}</td>
+    </tr>`);
+  });
+  w.document.write(`<!DOCTYPE html><html><head><title>Sample Requirements</title><style>
+    body{font-family:Arial,sans-serif;padding:30px;font-size:12px;color:#222}
+    h2{color:#0a6e5c;margin-bottom:4px}
+    .meta{color:#555;margin-bottom:16px;font-size:12px}
+    table{width:100%;border-collapse:collapse;margin:12px 0}
+    th,td{border:1px solid #ccc;padding:7px 10px;text-align:left}
+    th{background:#0a6e5c;color:#fff;font-size:11px}
+    .footer{margin-top:20px;font-size:10px;color:#888;border-top:1px solid #eee;padding-top:8px}
+  <\/style><\/head><body>
+    <h2>Sample Requirements</h2>
+    <div class="meta"><strong>No. of samples:</strong> ${numSamples} &nbsp;&nbsp; <strong>Date:</strong> ${new Date().toLocaleDateString('en-IN')}<br>
+    Generated by RubberLab — Attuned Polymers Private Limited</div>
+    <table>
+      <tr><th>Test</th><th>Standard</th><th>Specimen Type</th><th>Dimensions / Form</th><th style="text-align:center">Pieces Required</th></tr>
+      ${tableRows.join('')}
+    </table>
+    <div class="footer">This is a system-generated sample requirement guide. Actual requirements may vary based on product geometry.</div>
+  <\/body><\/html>`);
+  w.document.close(); w.print();
+}
+
 // -- PRICE LIST EDIT / ADD ---------------------------------------------
 let editingTestSr = null;
 
@@ -1635,15 +1906,17 @@ const PRICE_DATA_ORIGINAL_SRS = new Set(PRICE_DATA.map(t=>t.sr));
 
 function renderPriceList(){
   const q=(document.getElementById('price-search')?.value||'').toLowerCase();
-  const f=q?PRICE_DATA.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q)):PRICE_DATA;
+  const f=q?PRICE_DATA.filter(t=>t.name.toLowerCase().includes(q)||t.cat.toLowerCase().includes(q)||(t.std||'').toLowerCase().includes(q)):PRICE_DATA;
   const catColors={Chemical:'badge-blue',Physical:'badge-teal','Oil & Swelling':'badge-amber',Electrical:'badge-purple','Low Temperature':'badge-blue',Ozone:'badge-red',Rheology:'badge-purple',Miscellaneous:'badge-gray'};
   const isBase = new Set(Array.from(PRICE_DATA_ORIGINAL_SRS));
   document.getElementById('price-table').innerHTML=f.map(t=>`<tr>
     <td style="font-family:var(--mono);font-size:11px;color:var(--text3)">${t.sr}</td>
     <td class="strong">${t.name}${t.groupId?'<span class="group-badge" style="margin-left:6px">GROUP</span>':''}</td>
     <td><span class="badge ${catColors[t.cat]||'badge-gray'}">${t.cat}</span></td>
-    <td style="font-family:var(--mono)">₹${t.nonNabl.toLocaleString('en-IN')}</td>
-    <td style="font-family:var(--mono);color:var(--purple)">${t.nabl?'₹'+t.nabl.toLocaleString('en-IN'):'—'}</td>
+    <td style="font-size:11px;color:var(--text2)">${t.unit||'&#8212;'}</td>
+    <td style="font-size:11px;color:var(--text3);max-width:160px;white-space:normal">${t.std||'&#8212;'}</td>
+    <td style="font-family:var(--mono)">&#8377;${t.nonNabl.toLocaleString('en-IN')}</td>
+    <td style="font-family:var(--mono);color:var(--purple)">${t.nabl?'&#8377;'+t.nabl.toLocaleString('en-IN'):'&#8212;'}</td>
     <td style="font-size:11px;color:var(--amber)">${t.remark||''}</td>
     <td style="white-space:nowrap">
       <button class="btn btn-ghost btn-sm" onclick="openAddTestModal('${t.sr}')">Edit</button>
