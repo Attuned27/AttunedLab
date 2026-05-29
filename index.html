@@ -362,7 +362,7 @@ textarea{resize:vertical;min-height:60px}
       <div class="divider"></div>
 
       <!-- Test selector -->
-      <div class="section-header"><span class="section-title">Select tests</span><span style="font-size:11px;color:var(--text3)">Tick to add → set quantity per line</span></div>
+      <div class="section-header"><span class="section-title">Select tests</span><span style="font-size:11px;color:var(--text3)">Tick to add -> set quantity per line</span></div>
       <div class="info-box">💡 Tensile + Elongation + Modulus (Rubber or Plastic) are billed as one group charge × quantity. Selecting any combination charges once per sample.</div>
       <div style="margin-bottom:10px">
         <div class="search-bar" style="width:100%">
@@ -498,7 +498,7 @@ textarea{resize:vertical;min-height:60px}
 </div>
 
 <script>
-// ── AUTH ───────────────────────────────────────────────────────────────
+// -- AUTH ---------------------------------------------------------------
 const USERS={'admin':{pass:'lab@2024',role:'Admin'},'labtech':{pass:'tech@2024',role:'Technician'},'manager':{pass:'mgr@2024',role:'Manager'}};
 let currentUser=null;
 function doLogin(){
@@ -520,7 +520,7 @@ function doLogout(){
   document.getElementById('login-user').value='';document.getElementById('login-pass').value='';
 }
 
-// ── PRICE DATA ─────────────────────────────────────────────────────────
+// -- PRICE DATA ---------------------------------------------------------
 // groupId: tests with same groupId share one charge (billed once × qty)
 const PRICE_DATA=[
   {sr:'1',name:'Acetone Extract (& Extraction)',cat:'Chemical',nonNabl:2100,nabl:2200},
@@ -667,13 +667,13 @@ const PRICE_DATA=[
   {sr:'124',name:'Light Transmittance',cat:'Miscellaneous',nonNabl:1550,nabl:null},
 ];
 
-// Group definitions: all tests in same groupId → billed as one charge × qty
+// Group definitions: all tests in same groupId -> billed as one charge × qty
 const GROUPS={
   'rubber-mech':{label:'Tensile + Elongation + Modulus (Rubber)',nonNabl:2100,nabl:2100},
   'plastic-mech':{label:'Tensile + Elongation + Modulus (Plastic)',nonNabl:2100,nabl:null},
 };
 
-// ── DATA STORES ────────────────────────────────────────────────────────
+// -- DATA STORES --------------------------------------------------------
 let samples=JSON.parse(localStorage.getItem('rl3-samples')||'[]');
 let quotes=JSON.parse(localStorage.getItem('rl3-quotes')||'[]');
 let reports=JSON.parse(localStorage.getItem('rl3-reports')||'[]');
@@ -691,7 +691,7 @@ function save(){
 function genId(p,a){return p+'-'+new Date().getFullYear()+'-'+String(a.length+1).padStart(4,'0');}
 function getRate(t,nabl){return nabl==='nabl'&&t.nabl!=null?t.nabl:t.nonNabl;}
 
-// ── NAVIGATION ─────────────────────────────────────────────────────────
+// -- NAVIGATION ---------------------------------------------------------
 const PAGES=['dashboard','samples','quotations','reports','clients','pricelist','invoices'];
 function showPage(p){
   PAGES.forEach(x=>document.getElementById('page-'+x).classList.toggle('hidden',x!==p));
@@ -705,7 +705,7 @@ function showPage(p){
   if(p==='invoices')renderInvoices();
 }
 
-// ── MODALS ─────────────────────────────────────────────────────────────
+// -- MODALS -------------------------------------------------------------
 function openModal(m){
   updateClientDatalist();
   if(m==='sample'){
@@ -745,7 +745,7 @@ function updateClientDatalist(){
   ['client-names','client-names2'].forEach(id=>{const dl=document.getElementById(id);if(dl)dl.innerHTML=clients.map(c=>`<option value="${c.company}">`).join('');});
 }
 
-// ── SAMPLE TEST SELECTOR ───────────────────────────────────────────────
+// -- SAMPLE TEST SELECTOR -----------------------------------------------
 function buildSampleTestList(){
   const cats=[...new Set(PRICE_DATA.map(t=>t.cat))];
   document.getElementById('s-test-list').innerHTML=cats.map(cat=>{
@@ -756,7 +756,7 @@ function buildSampleTestList(){
   }).join('');
 }
 
-// ── QUOTE BUILDER ──────────────────────────────────────────────────────
+// -- QUOTE BUILDER ------------------------------------------------------
 function buildQuoteSelector(){
   const nabl=document.getElementById('q-nabl').value;
   const cats=[...new Set(PRICE_DATA.map(t=>t.cat))];
@@ -898,7 +898,7 @@ function addCustomLine(){
   calcTotal();
 }
 
-// ── QUOTE → SAMPLE LINK ──────────────────────────────────────────────
+// -- QUOTE -> SAMPLE LINK ----------------------------------------------
 function onQuoteLink(){
   const qId=document.getElementById('s-quote-link').value;
   const badge=document.getElementById('s-link-badge');
@@ -934,7 +934,7 @@ function onQuoteLink(){
   badge.textContent=`✓ ${testNames.size} tests loaded from ${qId}`;
 }
 
-// ── EXCEL IMPORT ──────────────────────────────────────────────────────
+// -- EXCEL IMPORT ------------------------------------------------------
 function openImportModal(){
   document.getElementById('import-preview-body').innerHTML='';
   document.getElementById('import-status').textContent='';
@@ -1014,7 +1014,7 @@ function confirmImport(){
   renderClients();
 }
 
-// ── AGEING SUB-TESTS ──────────────────────────────────────────────────
+// -- AGEING SUB-TESTS --------------------------------------------------
 const AGEING_TESTS=[
   {sr:'42',name:'Tensile Strength (Rubber)',nonNabl:2100,nabl:2100,groupId:'rubber-mech'},
   {sr:'43',name:'Elongation at Break (Rubber)',nonNabl:2100,nabl:2100,groupId:'rubber-mech'},
@@ -1103,7 +1103,7 @@ function calcOzone(nabl){
   if(bd){
     let lines=`Base (${pphm} PPHM, 48 hrs): ₹${base.toLocaleString('en-IN')}`;
     if(extraHrs>0)lines+=` + ${extraHrs} extra hrs × ₹${hrRate} = ₹${(extraHrs*hrRate).toLocaleString('en-IN')}`;
-    lines+=` → 1st sample: ₹${firstSample.toLocaleString('en-IN')}`;
+    lines+=` -> 1st sample: ₹${firstSample.toLocaleString('en-IN')}`;
     if(numSamples>1)lines+=` | ${numSamples-1} add. sample(s) @ 60%: ₹${Math.round(additionalSamples).toLocaleString('en-IN')}`;
     lines+=` | Total: ₹${total.toLocaleString('en-IN')}`;
     bd.textContent=lines;
@@ -1414,7 +1414,7 @@ function printQuote(id, mode){
     .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;background:#e6f9f5;color:#0a6e5c;font-weight:600;border:1px solid #b2e8d8}
     .footer{margin-top:24px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:10px}
     @media print{.mode-tag{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
-  </style></head><body>
+  <\/style><\/head><body>
     <h2>Quotation <span class="mode-tag">${isDetailed?'Internal / Detailed':'For Client'}</span></h2>
     <div class="meta">
       <strong>Quote No:</strong> ${q.id} &nbsp;&nbsp; <strong>Date:</strong> ${q.date}<br>
@@ -1427,11 +1427,11 @@ function printQuote(id, mode){
       ${isDetailed?'<strong>INTERNAL USE ONLY</strong> &mdash; Do not share with client.<br>':''}
       System-generated quotation. Valid for 30 days from date of issue. All charges subject to GST as above.
     </div>
-  </body></html>`);
+  <\/body><\/html>`);
   w.document.close();w.print();
 }
 
-// ── SAMPLES ────────────────────────────────────────────────────────────
+// -- SAMPLES ------------------------------------------------------------
 function addSample(){
   const client=document.getElementById('s-client').value.trim();
   const material=document.getElementById('s-material').value;
@@ -1467,7 +1467,7 @@ function statusBadge(st){const m={Received:'badge-blue','In Queue':'badge-purple
 function openStatusModal(id){statusTarget=id;const s=samples.find(x=>x.id===id);document.getElementById('status-select').value=s.status;document.getElementById('modal-status').classList.remove('hidden');}
 function confirmStatus(){const s=samples.find(x=>x.id===statusTarget);if(s){s.status=document.getElementById('status-select').value;save();}closeModal('status');renderSamples();renderDash();}
 
-// ── REPORTS ────────────────────────────────────────────────────────────
+// -- REPORTS ------------------------------------------------------------
 function updateReportFields(){
   const id=document.getElementById('r-sample').value;
   const s=samples.find(x=>x.id===id);if(!s){document.getElementById('r-test-fields').innerHTML='';return;}
@@ -1487,7 +1487,7 @@ function updatePreview(){
   const rows=s.tests.map(t=>{const key=t.replace(/[\s\/()%°,.']+/g,'_');const val=document.getElementById('rv-'+key)?.value||'—';const spec=document.getElementById('rs-'+key)?.value||'—';return`  ${t.substring(0,26).padEnd(28)} ${val.padEnd(14)} ${spec}`;}).join('\n');
   document.getElementById('report-preview').textContent=
 `TEST REPORT
-═══════════════════════════════════════════════
+-----------------------------------------------
 Sample ID   : ${s.id}
 Client      : ${s.client}
 Material    : ${s.material}
@@ -1495,12 +1495,12 @@ Test Type   : ${s.nabl==='nabl'?'NABL':'Non-NABL'}
 Date        : ${new Date().toLocaleDateString('en-IN')}
 Tested by   : ${tester}
 Result      : ${result}
-───────────────────────────────────────────────
+-----------------------------------------------
 TEST                         VALUE          SPEC/LIMIT
 ${rows}
-───────────────────────────────────────────────
+-----------------------------------------------
 Remarks: ${remarks}
-═══════════════════════════════════════════════
+-----------------------------------------------
 RubberLab Testing Laboratory`;
 }
 function addReport(){
@@ -1524,16 +1524,16 @@ function renderReports(){
 function printReport(id){
   const r=reports.find(x=>x.id===id);const s=samples.find(x=>x.id===r?.sampleId);if(!r||!s)return;
   const w=window.open('','_blank');
-  w.document.write(`<html><head><title>Report ${r.id}</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto}h2{color:#0a6e5c}.meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px}.result-box{display:inline-block;padding:8px 20px;border-radius:6px;font-size:16px;font-weight:bold;margin-bottom:16px}.pass{background:#e6faf5;color:#0a6e5c}.fail{background:#ffe6e6;color:#c00}.cond{background:#fff7e6;color:#b36000}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f0f9f6;color:#0a6e5c}.footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}</style></head><body>
+  w.document.write(`<html><head><title>Report ${r.id}</title><style>body{font-family:Arial,sans-serif;padding:40px;max-width:680px;margin:auto}h2{color:#0a6e5c}.meta{font-size:13px;color:#555;line-height:1.8;margin-bottom:16px;background:#f0f9f6;padding:12px 16px;border-radius:6px}.result-box{display:inline-block;padding:8px 20px;border-radius:6px;font-size:16px;font-weight:bold;margin-bottom:16px}.pass{background:#e6faf5;color:#0a6e5c}.fail{background:#ffe6e6;color:#c00}.cond{background:#fff7e6;color:#b36000}table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{border:1px solid #ddd;padding:8px 12px;text-align:left}th{background:#f0f9f6;color:#0a6e5c}.footer{margin-top:32px;font-size:11px;color:#888;border-top:1px solid #eee;padding-top:12px}<\/style><\/head><body>
     <h2>Test Report — ${r.id}</h2>
     <div class="meta"><strong>Sample ID:</strong> ${s.id} &nbsp;&nbsp; <strong>Date:</strong> ${r.date}<br><strong>Client:</strong> ${s.client} &nbsp;&nbsp; <strong>Material:</strong> ${s.material}<br>${s.std?`<strong>Standard:</strong> ${s.std}<br>`:''}<strong>Test type:</strong> ${s.nabl==='nabl'?'NABL':'Non-NABL'} &nbsp;&nbsp; <strong>Tested by:</strong> ${r.tester||'—'}</div>
     <div class="result-box ${r.result==='Pass'?'pass':r.result==='Fail'?'fail':'cond'}">${r.result}</div>
     <table><tr><th>#</th><th>Test</th><th>Observed value</th><th>Spec / Limit</th></tr>${s.tests.map((t,i)=>`<tr><td>${i+1}</td><td>${t}</td><td>—</td><td>—</td></tr>`).join('')}</table>
     <div class="footer">Generated by RubberLab Testing Laboratory · ${r.date}</div>
-  </body></html>`);w.document.close();w.print();
+  <\/body><\/html>`);w.document.close();w.print();
 }
 
-// ── CLIENTS ────────────────────────────────────────────────────────────
+// -- CLIENTS ------------------------------------------------------------
 function addClient(){
   const company=document.getElementById('c-company').value.trim();if(!company){alert('Company name required.');return;}
   clients.push({company,contact:document.getElementById('c-contact').value,email:document.getElementById('c-email').value,phone:document.getElementById('c-phone').value,city:document.getElementById('c-city').value,gst:document.getElementById('c-gst').value});
@@ -1557,10 +1557,10 @@ function renderClients(){
   }).join('');
 }
 
-// ── PRICE LIST ─────────────────────────────────────────────────────────
+// -- PRICE LIST ---------------------------------------------------------
 // renderPriceList moved to price list edit section above
 
-// ── PRICE LIST EDIT / ADD ─────────────────────────────────────────────
+// -- PRICE LIST EDIT / ADD ---------------------------------------------
 let editingTestSr = null;
 
 function openAddTestModal(sr){
@@ -1652,11 +1652,10 @@ function renderPriceList(){
   </tr>`).join('');
 }
 
-// ── PROFORMA INVOICE ──────────────────────────────────────────────────
+// -- PROFORMA INVOICE --------------------------------------------------
 const LAB = {
   name: 'Attuned Polymers Private Limited',
-  address: '311, Rajasthan Technical Centre, Patanwala Compound,
-LBS Road, Ghatkopar (West), Mumbai - 400086, India.',
+  address: '311, Rajasthan Technical Centre, Patanwala Compound, LBS Road, Ghatkopar (West), Mumbai - 400086, India.',
   tel: '+91 7400459627',
   email: 'info@attunedpolymerslab.com',
   website: 'www.attunedpolymerslab.com',
@@ -1944,7 +1943,7 @@ function printPI(id, copy){
     .sig-box{margin-top:16px;text-align:right;font-size:11px}
     .cheque-note{font-size:10px;color:#555;margin-top:8px;text-align:center;border-top:1px solid #eee;padding-top:6px}
     @media print{body{padding:10px}button{display:none}}
-  </style></head><body>
+  <\/style><\/head><body>
     <div class="header">
       <h1>${LAB.name}</h1>
       <p>${LAB.address.replace(/\n/,'<br>')}<br>
@@ -2014,12 +2013,12 @@ function printPI(id, copy){
     </div>
     <div class="words-box">Total Invoice Amount in Words: <strong>${numberToWords(total)}</strong></div>
     <div class="sig-box"><br><br>____________________________<br>Authorised Signatory</div>
-  </body></html>`);
+  <\/body><\/html>`);
   w.document.close();
   w.print();
 }
 
-// ── DASHBOARD ──────────────────────────────────────────────────────────
+// -- DASHBOARD ----------------------------------------------------------
 function renderDash(){
   const active=samples.filter(s=>s.status!=='Done'&&s.status!=='Dispatched').length;
   const done=samples.filter(s=>s.status==='Done'||s.status==='Dispatched').length;
